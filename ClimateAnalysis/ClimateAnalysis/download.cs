@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DotSpatial.Controls;
 using DotSpatial.Data;
-using HydroDesktop;
-using IronPython.Hosting;
 using DotSpatial.Symbology;
-using System.Net;
+using IronPython.Hosting;
 
 namespace ClimateAnalysis
 {
@@ -38,10 +33,10 @@ namespace ClimateAnalysis
         private string histOne;
         private string histTwo;
         private string filePath;
-		private ProcessData processor;
-		private ImportFromFile import;
-		private Progress prog;
-		private AppManager app;
+        private ProcessData processor;
+        private ImportFromFile import;
+        private Progress prog;
+        private AppManager app;
 
         private enum AreaSelectMode
         {
@@ -55,9 +50,9 @@ namespace ClimateAnalysis
         {
             InitializeComponent();
             map = (app.Map as Map);
-			this.app = app;
-			processor = proc;
-			import = imp;
+            this.app = app;
+            processor = proc;
+            import = imp;
 
             //add models
             comboBox1.Items.Add("ACCESS1-0");
@@ -101,31 +96,31 @@ namespace ClimateAnalysis
 
         }
 
-		private void callPythonCode() {
+        private void callPythonCode() {
 
             var options = new Dictionary<string, object>();
             options["Frames"] = true;
             options["FullFrames"] = true;
 
-			//create ironpython engine and scope
-			Microsoft.Scripting.Hosting.ScriptEngine py = Python.CreateEngine(options);
-			Microsoft.Scripting.Hosting.ScriptScope scope = py.CreateScope();
+            //create ironpython engine and scope
+            Microsoft.Scripting.Hosting.ScriptEngine py = Python.CreateEngine(options);
+            Microsoft.Scripting.Hosting.ScriptScope scope = py.CreateScope();
 
-			//add python folder to pythonpath
-			string pythonCodePath = Application.StartupPath + "/Plugins/ClimateAnalysis/IronPython/";
+            //add python folder to pythonpath
+            string pythonCodePath = Application.StartupPath + "/Plugins/ClimateAnalysis/IronPython/";
             string pyGDPPath = Application.StartupPath + "/Plugins/ClimateAnalysis/IronPython/pyGDP-master/";
             string OWSPath = Application.StartupPath + "/Plugins/ClimateAnalysis/IronPython/owslib/";
             string owslibPath = Application.StartupPath + "/Plugins/ClimateAnalysis/IronPython/OWS/OWSLib-0.8.6/owslib/";
             string libPath = Application.StartupPath + "/Plugins/ClimateAnalysis/IronPython/Lib/";
-			ICollection<string> paths = py.GetSearchPaths();
-			paths.Add(pythonCodePath);
+            ICollection<string> paths = py.GetSearchPaths();
+            paths.Add(pythonCodePath);
             paths.Add(pyGDPPath);
             paths.Add(OWSPath);
             paths.Add(owslibPath);
             paths.Add(libPath);
-			py.SetSearchPaths(paths);
+            py.SetSearchPaths(paths);
 
-			//store variables in scope
+            //store variables in scope
             scope.SetVariable("futOne",futOne);
             scope.SetVariable("futTwo",futTwo);
             scope.SetVariable("futThree", futThree);
@@ -136,8 +131,8 @@ namespace ClimateAnalysis
             scope.SetVariable("histTwo", histTwo);
             scope.SetVariable("filePath", filePath);
 
-			//run code
-			py.ExecuteFile(Application.StartupPath + "/Plugins/ClimateAnalysis/IronPython/module1.py", scope);
+            //run code
+            py.ExecuteFile(Application.StartupPath + "/Plugins/ClimateAnalysis/IronPython/module1.py", scope);
 
             string outputPathF2 = scope.GetVariable("outputPathF2").ToString();
             string outputPathH1 = scope.GetVariable("outputPathH1").ToString();
@@ -153,122 +148,122 @@ namespace ClimateAnalysis
             WebClient webClient2 = new WebClient();
             webClient2.DownloadFile(urlH1, @filePath + "HistoricalClimateData.csv");
 
-			return;
+            return;
         }
 
-		private void createPrecipTempAndProjectionsFiles() {
-			string[] futureLines = System.IO.File.ReadAllLines(filePath + "/FutureClimateData.csv");
-			string[] historicalLines = System.IO.File.ReadAllLines(filePath + "/HistoricalClimateData.csv");
-			string[] currentLine = null;
-			DateTime dt;
-			double value;
-			bool precip = false;
-			List<List<KeyValuePair<DateTime, double>>> historicalPrecipData = new List<List<KeyValuePair<DateTime, double>>>();
-			List<List<KeyValuePair<DateTime, double>>> futurePrecipData = new List<List<KeyValuePair<DateTime, double>>>();
-			List<List<KeyValuePair<DateTime, double>>> historicalTempData = new List<List<KeyValuePair<DateTime, double>>>();
-			List<List<KeyValuePair<DateTime, double>>> futureTempData = new List<List<KeyValuePair<DateTime, double>>>();
-			List<KeyValuePair<DateTime, double>> currentList = null;
-			List<String> projectionNames = new List<string>();
-			//process historical data
-			for (int row = 0; row < historicalLines.Length; row++) {
-				if (historicalLines[row].Contains('#')) {
-					//save currentList if it has data
-					if (row != 0)
-						if (precip)
-							historicalPrecipData.Add(currentList);
-						else
-							historicalTempData.Add(currentList);
-					currentList = new List<KeyValuePair<DateTime, double>>();
-					precip = !precip;
-					row += 2;
-				} else {
-					currentLine = historicalLines[row].Split(',');
-					dt = DateTime.Parse(currentLine[0]);
-					value = Double.Parse(currentLine[1]);
-					currentList.Add(new KeyValuePair<DateTime,double>(dt, value));
-				}
-			}
-			historicalTempData.Add(currentList);
+        private void createPrecipTempAndProjectionsFiles() {
+            string[] futureLines = System.IO.File.ReadAllLines(filePath + "/FutureClimateData.csv");
+            string[] historicalLines = System.IO.File.ReadAllLines(filePath + "/HistoricalClimateData.csv");
+            string[] currentLine = null;
+            DateTime dt;
+            double value;
+            bool precip = false;
+            List<List<KeyValuePair<DateTime, double>>> historicalPrecipData = new List<List<KeyValuePair<DateTime, double>>>();
+            List<List<KeyValuePair<DateTime, double>>> futurePrecipData = new List<List<KeyValuePair<DateTime, double>>>();
+            List<List<KeyValuePair<DateTime, double>>> historicalTempData = new List<List<KeyValuePair<DateTime, double>>>();
+            List<List<KeyValuePair<DateTime, double>>> futureTempData = new List<List<KeyValuePair<DateTime, double>>>();
+            List<KeyValuePair<DateTime, double>> currentList = null;
+            List<String> projectionNames = new List<string>();
+            //process historical data
+            for (int row = 0; row < historicalLines.Length; row++) {
+                if (historicalLines[row].Contains('#')) {
+                    //save currentList if it has data
+                    if (row != 0)
+                        if (precip)
+                            historicalPrecipData.Add(currentList);
+                        else
+                            historicalTempData.Add(currentList);
+                    currentList = new List<KeyValuePair<DateTime, double>>();
+                    precip = !precip;
+                    row += 2;
+                } else {
+                    currentLine = historicalLines[row].Split(',');
+                    dt = DateTime.Parse(currentLine[0]);
+                    value = Double.Parse(currentLine[1]);
+                    currentList.Add(new KeyValuePair<DateTime,double>(dt, value));
+                }
+            }
+            historicalTempData.Add(currentList);
 
-			//process future data
-			for (int row = 0; row < futureLines.Length; row++) {
-				if (futureLines[row].Contains('#')) {
-					//save projection name
-					if (precip) {
-						string[] info = futureLines[row].Split('_');
-						projectionNames.Add(info[4] + "." + info[6].ElementAt(1) + "." + info[5]);
-					}
-					//save currentList if it has data
-					if (row != 0)
-						if (precip)
-							futurePrecipData.Add(currentList);
-						else
-							futureTempData.Add(currentList);
-					//create new list
-					currentList = new List<KeyValuePair<DateTime, double>>();
-					precip = !precip;
-					row += 2;
-				}
-				else {
-					currentLine = futureLines[row].Split(',');
-					dt = DateTime.Parse(currentLine[0]);
-					value = Double.Parse(currentLine[1]);
-					currentList.Add(new KeyValuePair<DateTime, double>(dt, value));
-				}
-			}
-			futureTempData.Add(currentList);
+            //process future data
+            for (int row = 0; row < futureLines.Length; row++) {
+                if (futureLines[row].Contains('#')) {
+                    //save projection name
+                    if (precip) {
+                        string[] info = futureLines[row].Split('_');
+                        projectionNames.Add(info[4] + "." + info[6].ElementAt(1) + "." + info[5]);
+                    }
+                    //save currentList if it has data
+                    if (row != 0)
+                        if (precip)
+                            futurePrecipData.Add(currentList);
+                        else
+                            futureTempData.Add(currentList);
+                    //create new list
+                    currentList = new List<KeyValuePair<DateTime, double>>();
+                    precip = !precip;
+                    row += 2;
+                }
+                else {
+                    currentLine = futureLines[row].Split(',');
+                    dt = DateTime.Parse(currentLine[0]);
+                    value = Double.Parse(currentLine[1]);
+                    currentList.Add(new KeyValuePair<DateTime, double>(dt, value));
+                }
+            }
+            futureTempData.Add(currentList);
 
-			//write precip file
-			string precipFileName = filePath + "/precip_data.csv";
-			List<String> lines = new List<string>();
-			for (int row = 0; row < historicalPrecipData[0].Count; row++) {
-				String str = historicalPrecipData[0][row].Key.Year + ", " + historicalPrecipData[0][row].Key.Month;
-				for (int col = 0; col < historicalPrecipData.Count; col++) {
-					str += ", " + historicalPrecipData[col][row].Value;
-				}
-				lines.Add(str);
-			}
-			for (int row = 0; row < futurePrecipData[0].Count; row++) {
-				String str = futurePrecipData[0][row].Key.Year + ", " + futurePrecipData[0][row].Key.Month;
-				for (int col = 0; col < futurePrecipData.Count; col++) {
-					str += ", " + futurePrecipData[col][row].Value;
-				}
-				lines.Add(str);
-			}
-			System.IO.File.WriteAllLines(precipFileName, lines);
+            //write precip file
+            string precipFileName = filePath + "/precip_data.csv";
+            List<String> lines = new List<string>();
+            for (int row = 0; row < historicalPrecipData[0].Count; row++) {
+                String str = historicalPrecipData[0][row].Key.Year + ", " + historicalPrecipData[0][row].Key.Month;
+                for (int col = 0; col < historicalPrecipData.Count; col++) {
+                    str += ", " + historicalPrecipData[col][row].Value;
+                }
+                lines.Add(str);
+            }
+            for (int row = 0; row < futurePrecipData[0].Count; row++) {
+                String str = futurePrecipData[0][row].Key.Year + ", " + futurePrecipData[0][row].Key.Month;
+                for (int col = 0; col < futurePrecipData.Count; col++) {
+                    str += ", " + futurePrecipData[col][row].Value;
+                }
+                lines.Add(str);
+            }
+            System.IO.File.WriteAllLines(precipFileName, lines);
 
-			//write temp file
-			string tempFileName = filePath + "/temp_data.csv";
-			lines = new List<string>();
-			for (int row = 0; row < historicalTempData[0].Count; row++) {
-				String str = historicalTempData[0][row].Key.Year + ", " + historicalTempData[0][row].Key.Month;
-				for (int col = 0; col < historicalTempData.Count; col++) {
-					str += ", " + historicalTempData[col][row].Value;
-				}
-				lines.Add(str);
-			}
-			for (int row = 0; row < futureTempData[0].Count; row++) {
-				String str = futureTempData[0][row].Key.Year + ", " + futureTempData[0][row].Key.Month;
-				for (int col = 0; col < futureTempData.Count; col++) {
-					str += ", " + futureTempData[col][row].Value;
-				}
-				lines.Add(str);
-			}
-			System.IO.File.WriteAllLines(tempFileName, lines);
+            //write temp file
+            string tempFileName = filePath + "/temp_data.csv";
+            lines = new List<string>();
+            for (int row = 0; row < historicalTempData[0].Count; row++) {
+                String str = historicalTempData[0][row].Key.Year + ", " + historicalTempData[0][row].Key.Month;
+                for (int col = 0; col < historicalTempData.Count; col++) {
+                    str += ", " + historicalTempData[col][row].Value;
+                }
+                lines.Add(str);
+            }
+            for (int row = 0; row < futureTempData[0].Count; row++) {
+                String str = futureTempData[0][row].Key.Year + ", " + futureTempData[0][row].Key.Month;
+                for (int col = 0; col < futureTempData.Count; col++) {
+                    str += ", " + futureTempData[col][row].Value;
+                }
+                lines.Add(str);
+            }
+            System.IO.File.WriteAllLines(tempFileName, lines);
 
-			//write projections file
-			string modelFileName = filePath + "/Projections.txt";
-			lines = new List<string>();
-			foreach (String str in projectionNames) {
-				lines.Add(str);
-			}
-			System.IO.File.WriteAllLines(modelFileName, lines);
+            //write projections file
+            string modelFileName = filePath + "/Projections.txt";
+            lines = new List<string>();
+            foreach (String str in projectionNames) {
+                lines.Add(str);
+            }
+            System.IO.File.WriteAllLines(modelFileName, lines);
 
-			processor.Import(precipFileName, tempFileName);
-			processor.importNames(modelFileName);
-			import.setDataLoaded(true);
-			processor.generateChangeFactors();
-			processor.addDataToDatabase(import, null, null);
+            processor.Import(precipFileName, tempFileName);
+            processor.importNames(modelFileName);
+            import.setDataLoaded(true);
+            processor.generateChangeFactors();
+            processor.addDataToDatabase(import, null, null);
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -282,11 +277,11 @@ namespace ClimateAnalysis
             filePath = "";
             filePath = textBox1.Text;
 
-			if (filePath == "") {
-				MessageBox.Show("Please select a file path");
-				return;
-			}
-			
+            if (filePath == "") {
+                MessageBox.Show("Please select a file path");
+                return;
+            }
+            
             //export rectangle as shapefile
             Boolean overwrite = true;
             FeatureSet copy=null;
@@ -307,7 +302,7 @@ namespace ClimateAnalysis
                             copy.DataTable.Columns.Add("id");
 
                             for (int i = 0; i < ifea.Selection.Count; i++)
-			                  {
+                              {
                                 IFeature fea = copy.AddFeature(ifea.Selection.ToFeatureList()[i]);
                                 fea.DataRow["id"] = i;
                             }
@@ -317,7 +312,7 @@ namespace ClimateAnalysis
                     {
 
 
-			                   }
+                               }
 
                         }
 
@@ -468,17 +463,17 @@ namespace ClimateAnalysis
 
             this.Hide();
 
-			IProgressHandler pHandler = app.ProgressHandler;
-			pHandler.Progress("", 0, "blah");
-			prog = new Progress(pHandler);
+            IProgressHandler pHandler = app.ProgressHandler;
+            pHandler.Progress("", 0, "blah");
+            prog = new Progress(pHandler);
 
-			//start new thread to handle python code
-			prog.start();
+            //start new thread to handle python code
+            prog.start();
             await Task.Factory.StartNew(() => callPythonCode());
-			prog.stop();
-			createPrecipTempAndProjectionsFiles();
+            prog.stop();
+            createPrecipTempAndProjectionsFiles();
 
-			//reset form
+            //reset form
             this.Dispose();
         }
 
@@ -683,16 +678,16 @@ namespace ClimateAnalysis
             comboBox2.ResetText();
             comboBox3.ResetText();
 
+            var comboBox1Text = comboBox1.SelectedItem.ToString();
 
-
-            if (comboBox1.SelectedItem == "ACCESS1-0" || comboBox1.SelectedItem == "ACCESS1-3" || comboBox1.SelectedItem == "bcc-csm1-1-m" || comboBox1.SelectedItem == "CESM1-BGC" || comboBox1.SelectedItem == "CMCC-CM" || comboBox1.SelectedItem == "HadGEM2-CC" || comboBox1.SelectedItem == "inmcm4" || comboBox1.SelectedItem == "ISPL-CM5B-LR")
+            if (comboBox1Text == "ACCESS1-0" || comboBox1Text == "ACCESS1-3" || comboBox1Text == "bcc-csm1-1-m" || comboBox1Text == "CESM1-BGC" || comboBox1Text == "CMCC-CM" || comboBox1Text == "HadGEM2-CC" || comboBox1Text == "inmcm4" || comboBox1Text == "ISPL-CM5B-LR")
             {
                 comboBox2.Items.Add("rcp45");
                 comboBox2.Items.Add("rcp85");
                 comboBox3.Items.Add("1");
             }
 
-            if (comboBox1.SelectedItem == "bcc-csm1-1" || comboBox1.SelectedItem == "GFDL-CM3" || comboBox1.SelectedItem == "GFDL-ESM2G" || comboBox1.SelectedItem == "GFDL-ESM2M" || comboBox1.SelectedItem == "HadGEM2-AO" || comboBox1.SelectedItem == "IPSL-CM5A-MR" || comboBox1.SelectedItem == "MIROC-ESM" || comboBox1.SelectedItem == "MIROC-ESM-CHEM" || comboBox1.SelectedItem == "MIROC5")
+            if (comboBox1Text == "bcc-csm1-1" || comboBox1Text == "GFDL-CM3" || comboBox1Text == "GFDL-ESM2G" || comboBox1Text == "GFDL-ESM2M" || comboBox1Text == "HadGEM2-AO" || comboBox1Text == "IPSL-CM5A-MR" || comboBox1Text == "MIROC-ESM" || comboBox1Text == "MIROC-ESM-CHEM" || comboBox1Text == "MIROC5")
             {
                 comboBox2.Items.Add("rcp26");
                 comboBox2.Items.Add("rcp45");
@@ -701,7 +696,7 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("1");
             }
 
-            if (comboBox1.SelectedItem == "CanESM2")
+            if (comboBox1Text == "CanESM2")
             {
                 comboBox2.Items.Add("rcp26");
                 comboBox2.Items.Add("rcp45");
@@ -713,7 +708,7 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("5");
             }
 
-            if (comboBox1.SelectedItem == "CCSM4")
+            if (comboBox1Text == "CCSM4")
             {
                 comboBox2.Items.Add("rcp26");
                 comboBox2.Items.Add("rcp45");
@@ -726,7 +721,7 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("5");
             }
 
-            if (comboBox1.SelectedItem == "CESM1-CAM5")
+            if (comboBox1Text == "CESM1-CAM5")
             {
                 comboBox2.Items.Add("rcp26");
                 comboBox2.Items.Add("rcp45");
@@ -734,14 +729,14 @@ namespace ClimateAnalysis
                 comboBox2.Items.Add("rcp85");
             }
 
-            if (comboBox1.SelectedItem == "CNRM-CM5")
+            if (comboBox1Text == "CNRM-CM5")
             {
                 comboBox2.Items.Add("rcp45");
                 comboBox2.Items.Add("rcp85");
                 
             }
 
-            if (comboBox1.SelectedItem == "CSIRO-Mk3-6-0")
+            if (comboBox1Text == "CSIRO-Mk3-6-0")
             {
                 comboBox2.Items.Add("rcp26");
                 comboBox2.Items.Add("rcp45");
@@ -759,7 +754,7 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("10");
             }
 
-            if (comboBox1.SelectedItem == "EC-EARTH")
+            if (comboBox1Text == "EC-EARTH")
             {
                 comboBox2.Items.Add("rcp26");
                 comboBox2.Items.Add("rcp45");
@@ -767,7 +762,7 @@ namespace ClimateAnalysis
                 
             }
 
-            if (comboBox1.SelectedItem == "FGOALS-g2" || comboBox1.SelectedItem == "MPI-ESM-LR" || comboBox1.SelectedItem == "BNU-ESM")
+            if (comboBox1Text == "FGOALS-g2" || comboBox1Text == "MPI-ESM-LR" || comboBox1Text == "BNU-ESM")
             {
                 comboBox2.Items.Add("rcp26");
                 comboBox2.Items.Add("rcp45");
@@ -775,14 +770,14 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("1");
             }
 
-            if (comboBox1.SelectedItem == "FGOALS-s2")
+            if (comboBox1Text == "FGOALS-s2")
             {
                 comboBox2.Items.Add("rcp60");
                 comboBox2.Items.Add("rcp85");
                 
             }
 
-            if (comboBox1.SelectedItem == "FIO-ESM")
+            if (comboBox1Text == "FIO-ESM")
             {
                 comboBox2.Items.Add("rcp26");
                 comboBox2.Items.Add("rcp45");
@@ -793,13 +788,13 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("3");
             }
 
-            if (comboBox1.SelectedItem == "GISS-E2-H-CC" || comboBox1.SelectedItem == "GISS-E2-R-CC")
+            if (comboBox1Text == "GISS-E2-H-CC" || comboBox1Text == "GISS-E2-R-CC")
             {
                 comboBox2.Items.Add("rcp45");
                 comboBox3.Items.Add("1");
             }
 
-            if (comboBox1.SelectedItem == "GISS-E2-R")
+            if (comboBox1Text == "GISS-E2-R")
             {
                 comboBox2.Items.Add("rcp26");
                 comboBox2.Items.Add("rcp45");
@@ -808,7 +803,7 @@ namespace ClimateAnalysis
                 
             }
 
-            if (comboBox1.SelectedItem == "HadGEM2-ES")
+            if (comboBox1Text == "HadGEM2-ES")
             {
                 comboBox2.Items.Add("rcp26");
                 comboBox2.Items.Add("rcp45");
@@ -820,7 +815,7 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("4");
             }
 
-            if (comboBox1.SelectedItem == "IPSL-CM5A-LR")
+            if (comboBox1Text == "IPSL-CM5A-LR")
             {
                 comboBox2.Items.Add("rcp26");
                 comboBox2.Items.Add("rcp45");
@@ -829,7 +824,7 @@ namespace ClimateAnalysis
                 
             }
 
-            if (comboBox1.SelectedItem == "MPI-ESM-LR")
+            if (comboBox1Text == "MPI-ESM-LR")
             {
                 comboBox2.Items.Add("rcp26");
                 comboBox2.Items.Add("rcp45");
@@ -871,7 +866,7 @@ namespace ClimateAnalysis
 
         private void comboBox2_SelectedIndexChanged_1(object sender, EventArgs e)
         {
-            if (comboBox2.SelectedItem == "access1-0")
+            if (comboBox2.SelectedItem.ToString() == "access1-0")
             {
                 comboBox3.Items.Add("rcp45");
 
@@ -905,8 +900,11 @@ namespace ClimateAnalysis
         private void comboBox2_SelectedIndexChanged_2(object sender, EventArgs e)
         {
             comboBox3.ResetText();
-            
-            if (comboBox1.SelectedItem == "CESM1-CAM5" && (comboBox2.SelectedItem == "rcp26" || comboBox2.SelectedItem == "rcp45" || comboBox2.SelectedItem == "rcp85"))
+
+            var comboBox1Text = comboBox1.SelectedItem.ToString();
+            var comboBox2Text = comboBox2.SelectedItem.ToString();
+
+            if (comboBox1Text == "CESM1-CAM5" && (comboBox2Text == "rcp26" || comboBox2Text == "rcp45" || comboBox2Text == "rcp85"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
@@ -914,7 +912,7 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("2");
                 comboBox3.Items.Add("3");
             }
-            if (comboBox1.SelectedItem == "CESM1-CAM5" && (comboBox2.SelectedItem == "rcp60"))
+            if (comboBox1Text == "CESM1-CAM5" && (comboBox2Text == "rcp60"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
@@ -922,13 +920,13 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("3");
             }
 
-            if (comboBox1.SelectedItem == "CNRM-CM5" && (comboBox2.SelectedItem == "rcp45"))
+            if (comboBox1Text == "CNRM-CM5" && (comboBox2Text == "rcp45"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
                 comboBox3.Items.Add("1");
             }
-            if (comboBox1.SelectedItem == "CNRM-CM5" && (comboBox2.SelectedItem == "rcp85"))
+            if (comboBox1Text == "CNRM-CM5" && (comboBox2Text == "rcp85"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
@@ -939,14 +937,14 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("10");
             }
 
-            if (comboBox1.SelectedItem == "EC-EARTH" && (comboBox2.SelectedItem == "rcp26"))
+            if (comboBox1Text == "EC-EARTH" && (comboBox2Text == "rcp26"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
                 comboBox3.Items.Add("8");
                 comboBox3.Items.Add("12");
             }
-            if (comboBox1.SelectedItem == "EC-EARTH" && (comboBox2.SelectedItem == "rcp45"))
+            if (comboBox1Text == "EC-EARTH" && (comboBox2Text == "rcp45"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
@@ -954,7 +952,7 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("8");
                 comboBox3.Items.Add("12");
             }
-            if (comboBox1.SelectedItem == "EC-EARTH" && (comboBox2.SelectedItem == "rcp85"))
+            if (comboBox1Text == "EC-EARTH" && (comboBox2Text == "rcp85"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
@@ -963,13 +961,13 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("12");
             }
 
-            if (comboBox1.SelectedItem == "FGOALS-s2" && (comboBox2.SelectedItem == "rcp60"))
+            if (comboBox1Text == "FGOALS-s2" && (comboBox2Text == "rcp60"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
                 comboBox3.Items.Add("2");
             }
-            if (comboBox1.SelectedItem == "FGOALS-s2" && (comboBox2.SelectedItem == "rcp85"))
+            if (comboBox1Text == "FGOALS-s2" && (comboBox2Text == "rcp85"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
@@ -977,13 +975,13 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("3");
             }
 
-            if (comboBox1.SelectedItem == "GISS-E2-R" && (comboBox2.SelectedItem == "rcp26" || comboBox2.SelectedItem == "rcp60" || comboBox2.SelectedItem == "rcp85"))
+            if (comboBox1Text == "GISS-E2-R" && (comboBox2Text == "rcp26" || comboBox2Text == "rcp60" || comboBox2Text == "rcp85"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
                 comboBox3.Items.Add("1");
             }
-            if (comboBox1.SelectedItem == "GISS-E2-R" && (comboBox2.SelectedItem == "rcp60"))
+            if (comboBox1Text == "GISS-E2-R" && (comboBox2Text == "rcp60"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
@@ -994,7 +992,7 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("5");
             }
 
-            if (comboBox1.SelectedItem == "IPSL-CM5A-LR" && (comboBox2.SelectedItem == "rcp26"))
+            if (comboBox1Text == "IPSL-CM5A-LR" && (comboBox2Text == "rcp26"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
@@ -1002,7 +1000,7 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("2");
                 comboBox3.Items.Add("3");
             }
-            if (comboBox1.SelectedItem == "IPSL-CM5A-LR" && (comboBox2.SelectedItem == "rcp45" || comboBox2.SelectedItem == "rcp85"))
+            if (comboBox1Text == "IPSL-CM5A-LR" && (comboBox2Text == "rcp45" || comboBox2Text == "rcp85"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
@@ -1011,14 +1009,14 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("3");
                 comboBox3.Items.Add("4");
             }
-            if (comboBox1.SelectedItem == "IPSL-CM5A-LR" && (comboBox2.SelectedItem == "rcp60"))
+            if (comboBox1Text == "IPSL-CM5A-LR" && (comboBox2Text == "rcp60"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
                 comboBox3.Items.Add("1");
             }
 
-            if (comboBox1.SelectedItem == "MPI-ESM-LR" & (comboBox2.SelectedItem == "rcp85"))
+            if (comboBox1Text == "MPI-ESM-LR" & (comboBox2Text == "rcp85"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
@@ -1026,7 +1024,7 @@ namespace ClimateAnalysis
                 comboBox3.Items.Add("2");
                 comboBox3.Items.Add("3");
             }
-            if (comboBox1.SelectedItem == "MPI-ESM-LR" && (comboBox2.SelectedItem == "rcp26" || comboBox2.SelectedItem == "rcp45"))
+            if (comboBox1Text == "MPI-ESM-LR" && (comboBox2Text == "rcp26" || comboBox2Text == "rcp45"))
             {
                 comboBox3.Items.Clear();
                 comboBox3.ResetText();
@@ -1039,66 +1037,66 @@ namespace ClimateAnalysis
 
         }
 
-		//temporary, for use generating a shape file for each huc 8
-		private void button8_Click(object sender, EventArgs e) {
-			filePath = "";
-			filePath = textBox1.Text;
+        //temporary, for use generating a shape file for each huc 8
+        private void button8_Click(object sender, EventArgs e) {
+            filePath = "";
+            filePath = textBox1.Text;
 
-			if (filePath == "") {
-				MessageBox.Show("Please select a file path");
-				return;
-			}
+            if (filePath == "") {
+                MessageBox.Show("Please select a file path");
+                return;
+            }
 
-			//export rectangle as shapefile
-			Boolean overwrite = true;
-			FeatureSet copy = null;
-			FeatureSet fs = (FeatureSet)map.Layers[map.Layers.Count - 1].DataSet;
-			List<IFeature> featureList = null;
+            //export rectangle as shapefile
+            Boolean overwrite = true;
+            FeatureSet copy = null;
+            FeatureSet fs = (FeatureSet)map.Layers[map.Layers.Count - 1].DataSet;
+            List<IFeature> featureList = null;
 
-			//identify selected watershed and export as shapefile
-			foreach (IFeatureLayer item2 in map.GetFeatureLayers()) {
-				try {
-					IFeatureLayer ifea = item2 as IFeatureLayer;
-					if (ifea.Selection.Count > 0) {
-						ifea.SelectAll();
-						featureList = ifea.Selection.ToFeatureList();
-					}
-				}
-				catch {
-				}
-			}
+            //identify selected watershed and export as shapefile
+            foreach (IFeatureLayer item2 in map.GetFeatureLayers()) {
+                try {
+                    IFeatureLayer ifea = item2 as IFeatureLayer;
+                    if (ifea.Selection.Count > 0) {
+                        ifea.SelectAll();
+                        featureList = ifea.Selection.ToFeatureList();
+                    }
+                }
+                catch {
+                }
+            }
 
-			if (fs == null && copy == null) {
-				MessageBox.Show("Please select a feature on the map or draw a region");
-				return;
-			}
+            if (fs == null && copy == null) {
+                MessageBox.Show("Please select a feature on the map or draw a region");
+                return;
+            }
 
-			for (int i = 0; i < featureList.Count; i++) {
-				//save shape file
-				IFeature ifea = featureList[i];
-				IFeature ifea2 = ifea.Centroid();
-				IList<DotSpatial.Topology.Coordinate> centroid = ifea2.Coordinates;
-				System.IO.Directory.CreateDirectory(filePath + "\\" + i);
-				string newFilePath = filePath + "\\" + i + "\\" + "a" + centroid[0].X + "_" + centroid[0].Y + ".shp";
-				fs = new FeatureSet();
-				fs.AddFeature(ifea);
-				fs.SaveAs(newFilePath, overwrite);
+            for (int i = 0; i < featureList.Count; i++) {
+                //save shape file
+                IFeature ifea = featureList[i];
+                IFeature ifea2 = ifea.Centroid();
+                IList<DotSpatial.Topology.Coordinate> centroid = ifea2.Coordinates;
+                System.IO.Directory.CreateDirectory(filePath + "\\" + i);
+                string newFilePath = filePath + "\\" + i + "\\" + "a" + centroid[0].X + "_" + centroid[0].Y + ".shp";
+                fs = new FeatureSet();
+                fs.AddFeature(ifea);
+                fs.SaveAs(newFilePath, overwrite);
 
-				//modify shape file
+                //modify shape file
 
-				// Compose a string consisting of EPSG WKT for web mercator
-				string lines = "PROJCS[\"WGS 84 / Pseudo-Mercator\",\r\n  GEOGCS[\"WGS 84\",\r\n    DATUM[\"World Geodetic System 1984\",\r\n      SPHEROID[\"WGS 84\", 6378137.0, 298.257223563, AUTHORITY[\"EPSG\",\"7030\"]],\r\n      AUTHORITY[\"EPSG\",\"6326\"]],\r\n    PRIMEM[\"Greenwich\", 0.0, AUTHORITY[\"EPSG\",\"8901\"]],\r\n    UNIT[\"degree\", 0.017453292519943295],\r\n    AXIS[\"Geodetic longitude\", EAST],\r\n    AXIS[\"Geodetic latitude\", NORTH],\r\n    AUTHORITY[\"EPSG\",\"4326\"]],\r\n  PROJECTION[\"Popular Visualisation Pseudo Mercator\", AUTHORITY[\"EPSG\",\"1024\"]],\r\n  PARAMETER[\"semi_minor\", 6378137.0],\r\n  PARAMETER[\"latitude_of_origin\", 0.0],\r\n  PARAMETER[\"central_meridian\", 0.0],\r\n  PARAMETER[\"scale_factor\", 1.0],\r\n  PARAMETER[\"false_easting\", 0.0],\r\n  PARAMETER[\"false_northing\", 0.0],\r\n  UNIT[\"m\", 1.0],\r\n  AXIS[\"Easting\", EAST],\r\n  AXIS[\"Northing\", NORTH],\r\n  AUTHORITY[\"EPSG\",\"3857\"]]";
+                // Compose a string consisting of EPSG WKT for web mercator
+                string lines = "PROJCS[\"WGS 84 / Pseudo-Mercator\",\r\n  GEOGCS[\"WGS 84\",\r\n    DATUM[\"World Geodetic System 1984\",\r\n      SPHEROID[\"WGS 84\", 6378137.0, 298.257223563, AUTHORITY[\"EPSG\",\"7030\"]],\r\n      AUTHORITY[\"EPSG\",\"6326\"]],\r\n    PRIMEM[\"Greenwich\", 0.0, AUTHORITY[\"EPSG\",\"8901\"]],\r\n    UNIT[\"degree\", 0.017453292519943295],\r\n    AXIS[\"Geodetic longitude\", EAST],\r\n    AXIS[\"Geodetic latitude\", NORTH],\r\n    AUTHORITY[\"EPSG\",\"4326\"]],\r\n  PROJECTION[\"Popular Visualisation Pseudo Mercator\", AUTHORITY[\"EPSG\",\"1024\"]],\r\n  PARAMETER[\"semi_minor\", 6378137.0],\r\n  PARAMETER[\"latitude_of_origin\", 0.0],\r\n  PARAMETER[\"central_meridian\", 0.0],\r\n  PARAMETER[\"scale_factor\", 1.0],\r\n  PARAMETER[\"false_easting\", 0.0],\r\n  PARAMETER[\"false_northing\", 0.0],\r\n  UNIT[\"m\", 1.0],\r\n  AXIS[\"Easting\", EAST],\r\n  AXIS[\"Northing\", NORTH],\r\n  AUTHORITY[\"EPSG\",\"3857\"]]";
 
-				// Write the string to the .prj file
-				newFilePath = newFilePath.Remove(newFilePath.Length - 3) + "prj";
-				System.IO.StreamWriter file = new System.IO.StreamWriter(newFilePath);
-				file.WriteLine(lines);
-				file.Close();
+                // Write the string to the .prj file
+                newFilePath = newFilePath.Remove(newFilePath.Length - 3) + "prj";
+                System.IO.StreamWriter file = new System.IO.StreamWriter(newFilePath);
+                file.WriteLine(lines);
+                file.Close();
 
-			}
+            }
 
-			this.Hide();
-		}
+            this.Hide();
+        }
 
 
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using DotSpatial.Data;
 using DotSpatial.Projections;
-//using FacetedSearch3.Area;
 
 namespace ClimateAnalysis
 {

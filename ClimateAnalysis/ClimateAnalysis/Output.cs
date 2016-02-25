@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ClimateAnalysis
@@ -16,26 +9,26 @@ namespace ClimateAnalysis
         private string saveToFolderName = "";
         private OutputData dataOut = null;
         private ProcessData processor;
-		private ScatterGraph graph;
+        private ScatterGraph graph;
 
         public Output(ProcessData proc, ScatterGraph graph)
         {
             InitializeComponent();
             processor = proc;
-			this.graph = graph;
+            this.graph = graph;
         }
 
-		public String getSaveToFolderName() {
-			return saveToFolderName;
-		}
+        public String getSaveToFolderName() {
+            return saveToFolderName;
+        }
 
-		public OutputData getOutputData() {
-			if (dataOut == null)
-				dataOut = new OutputData(processor, saveToFolderName);
-			return dataOut;
-		}
+        public OutputData getOutputData() {
+            if (dataOut == null)
+                dataOut = new OutputData(processor, saveToFolderName);
+            return dataOut;
+        }
 
-		//browse for output folder name button
+        //browse for output folder name button
         private void button1_Click(object sender, EventArgs e)
         {
             if (fbd.ShowDialog() == DialogResult.OK)
@@ -45,7 +38,7 @@ namespace ClimateAnalysis
             }
         }
 
-		//create files button
+        //create files button
         private void button2_Click(object sender, EventArgs e)
         {
             //check to make sure inputs are correct
@@ -55,15 +48,15 @@ namespace ClimateAnalysis
                 return;
             }
 
-			//check to see if any outputs have been selected
-			if (!(checkBox1.Checked || checkBox2.Checked || checkBox3.Checked || checkBox4.Checked || checkBox5.Checked)) {
-				MessageBox.Show("Please specify a file to create.");
-				return;
-			}
+            //check to see if any outputs have been selected
+            if (!(checkBox1.Checked || checkBox2.Checked || checkBox3.Checked || checkBox4.Checked || checkBox5.Checked)) {
+                MessageBox.Show("Please specify a file to create.");
+                return;
+            }
 
             dataOut = new OutputData(processor, saveToFolderName);
 
-			processor.generateDeltas();
+            processor.generateDeltas();
 
             if (checkBox1.Checked)
             {
@@ -81,27 +74,27 @@ namespace ClimateAnalysis
             {
                 dataOut.writeProjectionSummaries();
             }
-			if (checkBox5.Checked) 
-			{
-				graph.drawGraph(null, 0);
-				graph.saveGraph(saveToFolderName);
-			}
+            if (checkBox5.Checked) 
+            {
+                graph.drawGraph(null, 0);
+                graph.saveGraph(saveToFolderName);
+            }
             this.Hide();
 
-			//open output folder
-			System.Diagnostics.Process.Start(saveToFolderName);
+            //open output folder
+            System.Diagnostics.Process.Start(saveToFolderName);
         }
 
-		//cancel button
+        //cancel button
         private void button3_Click(object sender, EventArgs e)
         {
             this.Hide();
         }
 
-		//stop the red x close button from disposing form
-		protected override void OnFormClosing(FormClosingEventArgs e) {
-			this.Hide();
-			e.Cancel = true;
-		}
+        //stop the red x close button from disposing form
+        protected override void OnFormClosing(FormClosingEventArgs e) {
+            this.Hide();
+            e.Cancel = true;
+        }
     }
 }

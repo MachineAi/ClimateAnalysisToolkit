@@ -2,19 +2,13 @@
 using Accord.Statistics;
 using DotSpatial.Controls;
 using HydroDesktop.Configuration;
-using HydroDesktop.Database;
-using HydroDesktop.ObjectModel;
-using HydroDesktop.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Drawing;
-using System.Threading.Tasks;
 using ZedGraph;
 using DotSpatial.Data;
 using DotSpatial.Topology;
-using System.Data;
 using DotSpatial.Symbology;
 
 namespace ClimateAnalysis {

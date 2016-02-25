@@ -1,43 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using DotSpatial.Controls;
-using DotSpatial.Controls.Docking;
 using DotSpatial.Controls.Header;
 using ClimateAnalysis.Properties;
-using HydroDesktop.Common;
 
 namespace ClimateAnalysis{
     public class ClimateAnalysis : Extension{
         #region Fields
-		private SimpleActionItem newButton;
-		private ImportFromFile importFromFileForm;
-		private ImportFromDB importFromDBForm;
+        private SimpleActionItem newButton;
+        private ImportFromFile importFromFileForm;
+        private ImportFromDB importFromDBForm;
         private download downloadForm;
         private Dates datesForm;
         private Ensembles ensembleForm;
         private Output outputForm;
         private ProcessData processor;
-		private ScatterGraph graph;
-		private ForcingFile forcingFileForm = null;
-		#endregion Fields
+        private ScatterGraph graph;
+        private ForcingFile forcingFileForm = null;
+        #endregion Fields
 
 
-		#region Plugin operations
+        #region Plugin operations
 
-		//Activates the plugin
-		public override void Activate() {
-			datesForm = new Dates(this);
-			processor = new ProcessData(datesForm, (Map)App.Map);
-			importFromFileForm = new ImportFromFile(processor, this);
-			importFromDBForm = new ImportFromDB(processor, importFromFileForm);
-			
-			graph = new ScatterGraph(processor, datesForm);
-			ensembleForm = new Ensembles(processor, graph, datesForm, this);
+        //Activates the plugin
+        public override void Activate() {
+            datesForm = new Dates(this);
+            processor = new ProcessData(datesForm, (Map)App.Map);
+            importFromFileForm = new ImportFromFile(processor, this);
+            importFromDBForm = new ImportFromDB(processor, importFromFileForm);
+            
+            graph = new ScatterGraph(processor, datesForm);
+            ensembleForm = new Ensembles(processor, graph, datesForm, this);
             outputForm = new Output(processor, graph);
-			datesForm.setProcessData(processor);
+            datesForm.setProcessData(processor);
 
             // Initialize the Ribbon controls in the "Climate" ribbon tab
             const string ClimateTabKey = "kClimate";
@@ -59,37 +54,37 @@ namespace ClimateAnalysis{
             newButton.LargeImage = Resources.fileIcon;
             App.HeaderControl.Add(newButton);
 
-			// Create and add Import button
-			newButton = new SimpleActionItem("Import From Database", importFromDBClick);
-			newButton.RootKey = ClimateTabKey;
-			newButton.ToolTipText = "Import climate data from the database";
-			newButton.GroupCaption = "Input";
-			newButton.LargeImage = Resources.Database;
-			App.HeaderControl.Add(newButton);
+            // Create and add Import button
+            newButton = new SimpleActionItem("Import From Database", importFromDBClick);
+            newButton.RootKey = ClimateTabKey;
+            newButton.ToolTipText = "Import climate data from the database";
+            newButton.GroupCaption = "Input";
+            newButton.LargeImage = Resources.Database;
+            App.HeaderControl.Add(newButton);
 
-			// Create and add delete button
-			newButton = new SimpleActionItem("Clear Imported Data", clearImportedDataClick);
-			newButton.RootKey = ClimateTabKey;
-			newButton.ToolTipText = "Clear all data the has been imported";
-			newButton.GroupCaption = "Input";
-			newButton.LargeImage = Resources.Actions_window_close_icon;
-			App.HeaderControl.Add(newButton);
+            // Create and add delete button
+            newButton = new SimpleActionItem("Clear Imported Data", clearImportedDataClick);
+            newButton.RootKey = ClimateTabKey;
+            newButton.ToolTipText = "Clear all data the has been imported";
+            newButton.GroupCaption = "Input";
+            newButton.LargeImage = Resources.Actions_window_close_icon;
+            App.HeaderControl.Add(newButton);
 
-			// Create and add Date Range button
-			SimpleActionItem dateButton = new SimpleActionItem("Select Dates", dateClick);
-			dateButton.RootKey = ClimateTabKey;
-			dateButton.ToolTipText = "Select date ranges";
-			dateButton.GroupCaption = "Analysis";
-			dateButton.LargeImage = Resources.calendar;
-			App.HeaderControl.Add(dateButton);
+            // Create and add Date Range button
+            SimpleActionItem dateButton = new SimpleActionItem("Select Dates", dateClick);
+            dateButton.RootKey = ClimateTabKey;
+            dateButton.ToolTipText = "Select date ranges";
+            dateButton.GroupCaption = "Analysis";
+            dateButton.LargeImage = Resources.calendar;
+            App.HeaderControl.Add(dateButton);
 
-			// Create and add Statistical button
-			SimpleActionItem statButton = new SimpleActionItem("Select Scenario", statClick);
-			statButton.RootKey = ClimateTabKey;
-			statButton.ToolTipText = "Select ensembles";
-			statButton.GroupCaption = "Analysis";
-			statButton.LargeImage = Resources.bar;
-			App.HeaderControl.Add(statButton);
+            // Create and add Statistical button
+            SimpleActionItem statButton = new SimpleActionItem("Select Scenario", statClick);
+            statButton.RootKey = ClimateTabKey;
+            statButton.ToolTipText = "Select ensembles";
+            statButton.GroupCaption = "Analysis";
+            statButton.LargeImage = Resources.bar;
+            App.HeaderControl.Add(statButton);
 
             // Create and add Output button
             SimpleActionItem outputButton = new SimpleActionItem("Save Results", outputClick);
@@ -107,13 +102,13 @@ namespace ClimateAnalysis{
             clusterButton.LargeImage = Resources.chart;
             App.HeaderControl.Add(clusterButton);
 
-			// Create and add Adjust Forcing File button
-			SimpleActionItem forcingButton = new SimpleActionItem("Adjust Forcing File", forcingClick);
-			forcingButton.RootKey = ClimateTabKey;
-			forcingButton.ToolTipText = "Adjusts forcing file";
-			forcingButton.GroupCaption = "Output";
-			forcingButton.LargeImage = Resources.adjust;
-			App.HeaderControl.Add(forcingButton);
+            // Create and add Adjust Forcing File button
+            SimpleActionItem forcingButton = new SimpleActionItem("Adjust Forcing File", forcingClick);
+            forcingButton.RootKey = ClimateTabKey;
+            forcingButton.ToolTipText = "Adjusts forcing file";
+            forcingButton.GroupCaption = "Output";
+            forcingButton.LargeImage = Resources.adjust;
+            App.HeaderControl.Add(forcingButton);
 
             // Create and add About button
             SimpleActionItem AboutButton = new SimpleActionItem("About", AboutClick);
@@ -131,38 +126,38 @@ namespace ClimateAnalysis{
             howToButton.LargeImage = Resources.help;
             App.HeaderControl.Add(howToButton);
 
-			base.Activate();
-		}
+            base.Activate();
+        }
 
-		// Deactivates the plugin
-		public override void Deactivate() {
-			// Remove ribbon tab
-			App.HeaderControl.RemoveAll();
-			base.Deactivate();
-		}
+        // Deactivates the plugin
+        public override void Deactivate() {
+            // Remove ribbon tab
+            App.HeaderControl.RemoveAll();
+            base.Deactivate();
+        }
 
-		#endregion Plugin operations
+        #endregion Plugin operations
 
-		#region Event Handlers
+        #region Event Handlers
 
         //Event handler that responds to Import From File Button being clicked
-		void importFromFileClick(object sender, EventArgs e) {
-			importFromFileForm.Owner = (App.Map as Map).ParentForm;
-			importFromFileForm.Show();
-		}
+        void importFromFileClick(object sender, EventArgs e) {
+            importFromFileForm.Owner = (App.Map as Map).ParentForm;
+            importFromFileForm.Show();
+        }
 
-		//Event handler that responds to Import From Database Button being clicked
-		void importFromDBClick(object sender, EventArgs e) {
-			importFromDBForm.Owner = (App.Map as Map).ParentForm;
-			importFromDBForm.updateCheckedListBox();
-			importFromDBForm.Show();
-		}
+        //Event handler that responds to Import From Database Button being clicked
+        void importFromDBClick(object sender, EventArgs e) {
+            importFromDBForm.Owner = (App.Map as Map).ParentForm;
+            importFromDBForm.updateCheckedListBox();
+            importFromDBForm.Show();
+        }
 
-		//Event handler that responds to Clear Imported Data button being clicked
-		void clearImportedDataClick(object sender, EventArgs e) {
-			processor.clearData();
-			importFromFileForm.setDataLoaded(false);
-		}
+        //Event handler that responds to Clear Imported Data button being clicked
+        void clearImportedDataClick(object sender, EventArgs e) {
+            processor.clearData();
+            importFromFileForm.setDataLoaded(false);
+        }
 
         //Event handler that responds to Ouput Button being clicked
         void outputClick(object sender, EventArgs e)
@@ -173,8 +168,8 @@ namespace ClimateAnalysis{
                 return;
             }
 
-			processor.generateChangeFactors();
-			processor.findEnsembles(ensembleForm.getEnsembles());
+            processor.generateChangeFactors();
+            processor.findEnsembles(ensembleForm.getEnsembles());
 
             outputForm.Show();
         }
@@ -184,61 +179,61 @@ namespace ClimateAnalysis{
         {
             datesForm.Owner = (App.Map as Map).ParentForm;
             datesForm.Show();
-			datesForm.updateList();
+            datesForm.updateList();
         }
 
         //Event handler that responds to Statistical button being clicked
         void statClick(object sender, EventArgs e)
         {
-			//check to see if data has been imported
-			if (importFromFileForm == null || !importFromFileForm.isDataLoaded()) {
-				MessageBox.Show("Please import climate data before running the analysis.");
-				return;
-			}
+            //check to see if data has been imported
+            if (importFromFileForm == null || !importFromFileForm.isDataLoaded()) {
+                MessageBox.Show("Please import climate data before running the analysis.");
+                return;
+            }
 
             ensembleForm.Owner = (App.Map as Map).ParentForm;
-			ensembleForm.update();
+            ensembleForm.update();
             ensembleForm.Show();
-			ensembleForm.fillInDates();
+            ensembleForm.fillInDates();
         }
 
         //Event handler that responds to Cluster Button being clicked
         void clusterClick(object sender, EventArgs e)
         {
-			//check to see if data has been loaded
+            //check to see if data has been loaded
             if (importFromFileForm == null || !importFromFileForm.isDataLoaded()){
                 MessageBox.Show("Please import climate data before creating graph.");
                 return;
             }
 
-			processor.generateChangeFactors();
-			processor.findEnsembles(ensembleForm.getEnsembles());
+            processor.generateChangeFactors();
+            processor.findEnsembles(ensembleForm.getEnsembles());
 
             //show cluster graph
-			graph.drawGraph(null, 0);
-			graph.fillInDates();
+            graph.drawGraph(null, 0);
+            graph.fillInDates();
             graph.Show();
             graph.BringToFront();
         }
 
-		//Event handler that responds to Forcing Button being clicked
-		void forcingClick(object sender, EventArgs e) {
-			//check to see if data has been loaded
-			if (importFromFileForm == null || !importFromFileForm.isDataLoaded()) {
-				MessageBox.Show("Please import climate data before adjusting forcing files.");
-				return;
-			}
+        //Event handler that responds to Forcing Button being clicked
+        void forcingClick(object sender, EventArgs e) {
+            //check to see if data has been loaded
+            if (importFromFileForm == null || !importFromFileForm.isDataLoaded()) {
+                MessageBox.Show("Please import climate data before adjusting forcing files.");
+                return;
+            }
 
-			processor.generateChangeFactors();
-			processor.findEnsembles(ensembleForm.getEnsembles());
+            processor.generateChangeFactors();
+            processor.findEnsembles(ensembleForm.getEnsembles());
 
-			if (forcingFileForm == null) {
-				forcingFileForm = new ForcingFile(outputForm);
-				forcingFileForm.Owner = (App.Map as Map).ParentForm;
-			}
-			processor.generateDeltas();
-			forcingFileForm.Show();
-		}
+            if (forcingFileForm == null) {
+                forcingFileForm = new ForcingFile(outputForm);
+                forcingFileForm.Owner = (App.Map as Map).ParentForm;
+            }
+            processor.generateDeltas();
+            forcingFileForm.Show();
+        }
 
         //Event handler that responds to Download Button being clicked
         void downloadClick(object sender, EventArgs e)
@@ -261,6 +256,6 @@ namespace ClimateAnalysis{
             System.Diagnostics.Process.Start("https://climate.codeplex.com/");
         } 
 
-		#endregion Event Handlers
+        #endregion Event Handlers
     }
 }
