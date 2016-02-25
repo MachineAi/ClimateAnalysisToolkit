@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/8wqg255qwoy53g0k?svg=true)](https://ci.appveyor.com/project/blounsbury36183/climatetools)
+
 # What is Climate Analysis Toolkit
 
 The Climate Analysis Toolkit is a free software tool for accessing and analyzing downscaled climate projection models. These climate models have been produced by several agencies and institutions from around the world and published for public access. The Climate Analysis Toolkit allows users to easily do the following:
