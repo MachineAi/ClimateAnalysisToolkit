@@ -70,7 +70,7 @@ namespace ClimateAnalysis {
                 string[] files = Directory.GetFiles(folder);
                 foreach (string s in files) {
                     try {
-                        dataOut.adjustForcingFile(s, VIC, checkBox1.Checked, date);
+                        dataOut.adjustForcingFile(s, VIC, chkPisces.Checked, date);
                     }
                     catch (Exception) {
                         MessageBox.Show("Error parsing: " + s);
@@ -78,7 +78,7 @@ namespace ClimateAnalysis {
                 }
             }
             else {
-                dataOut.adjustForcingFile(forcingFileName, VIC, checkBox1.Checked, date);
+                dataOut.adjustForcingFile(forcingFileName, VIC, chkPisces.Checked, date);
             }
 
             this.Hide();

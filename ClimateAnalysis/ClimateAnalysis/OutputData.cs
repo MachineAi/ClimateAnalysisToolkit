@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Reclamation.Core;
-using Reclamation.TimeSeries;
+//using Reclamation.Core;
+//using Reclamation.TimeSeries;
 
 namespace ClimateAnalysis {
     public class OutputData {
@@ -249,8 +249,8 @@ namespace ClimateAnalysis {
             writeAdjustedForcingFiles();
 
             //generate pisces database if requested
-            if (generateDatabase)
-                generatePiscesDatabase();
+            //if (generateDatabase)
+            //    generatePiscesDatabase();
         }
 
         public void setSaveToFolderName(String path) {
@@ -546,98 +546,98 @@ namespace ClimateAnalysis {
         }
 
         //Creates a Pisces Database from the monthlyData
-        private void generatePiscesDatabase() {
-            String connectionString = "Data Source=" + outputFolderName + @"\ChangeFactorStats.sdf; Version=3";
-            Reclamation.Core.SQLiteServer DB = new SQLiteServer(connectionString);
-            TimeSeriesDatabase pDB = new TimeSeriesDatabase(DB);
-            TimeSeriesDatabaseDataSet.SeriesCatalogRow serCatRow = pDB.GetSeriesCatalog()[0];
-            PiscesFolder prntFldr = new PiscesFolder(pDB, serCatRow);
+        //private void generatePiscesDatabase() {
+        //    String connectionString = "Data Source=" + outputFolderName + @"\ChangeFactorStats.sdf; Version=3";
+        //    Reclamation.Core.SQLiteServer DB = new SQLiteServer(connectionString);
+        //    TimeSeriesDatabase pDB = new TimeSeriesDatabase(DB);
+        //    TimeSeriesDatabaseDataSet.SeriesCatalogRow serCatRow = pDB.GetSeriesCatalog()[0];
+        //    PiscesFolder prntFldr = new PiscesFolder(pDB, serCatRow);
 
-            SeriesList HWt = new SeriesList();
-            SeriesList HWp = new SeriesList();
-            SeriesList HDt = new SeriesList();
-            SeriesList HDp = new SeriesList();
-            SeriesList MIt = new SeriesList();
-            SeriesList MIp = new SeriesList();
-            SeriesList WWt = new SeriesList();
-            SeriesList WWp = new SeriesList();
-            SeriesList WDt = new SeriesList();
-            SeriesList WDp = new SeriesList();
+        //    SeriesList HWt = new SeriesList();
+        //    SeriesList HWp = new SeriesList();
+        //    SeriesList HDt = new SeriesList();
+        //    SeriesList HDp = new SeriesList();
+        //    SeriesList MIt = new SeriesList();
+        //    SeriesList MIp = new SeriesList();
+        //    SeriesList WWt = new SeriesList();
+        //    SeriesList WWp = new SeriesList();
+        //    SeriesList WDt = new SeriesList();
+        //    SeriesList WDp = new SeriesList();
 
-            Series HDdP = new Series();
-            Series HDdT = new Series();
-            Series HWdP = new Series();
-            Series HWdT = new Series();
-            Series WDdP = new Series();
-            Series WDdT = new Series();
-            Series WWdP = new Series();
-            Series WWdT = new Series();
-            Series MIdP = new Series();
-            Series MIdT = new Series();
+        //    Series HDdP = new Series();
+        //    Series HDdT = new Series();
+        //    Series HWdP = new Series();
+        //    Series HWdT = new Series();
+        //    Series WDdP = new Series();
+        //    Series WDdT = new Series();
+        //    Series WWdP = new Series();
+        //    Series WWdT = new Series();
+        //    Series MIdP = new Series();
+        //    Series MIdT = new Series();
             
-            //get the data from each month and put it in the appropriate series
-            foreach (MonthlyData md in monthlyData) {
-                DateTime date = new DateTime(md.year, md.month + 1, 1);
-                double[,,] changeFactors = md.changeFactors;//future date ranges * ensembles * precip, temp
-                HDdP.Add(date, changeFactors[0, 0, 0]);
-                HDdT.Add(date, changeFactors[0, 0, 1]);
-                HWdP.Add(date, changeFactors[0, 1, 0]);
-                HWdT.Add(date, changeFactors[0, 1, 1]);
-                WDdP.Add(date, changeFactors[0, 2, 0]);
-                WDdT.Add(date, changeFactors[0, 2, 1]);
-                WWdP.Add(date, changeFactors[0, 3, 0]);
-                WWdT.Add(date, changeFactors[0, 3, 1]);
-                MIdP.Add(date, changeFactors[0, 4, 0]);
-                MIdT.Add(date, changeFactors[0, 4, 1]);
-            }
+        //    //get the data from each month and put it in the appropriate series
+        //    foreach (MonthlyData md in monthlyData) {
+        //        DateTime date = new DateTime(md.year, md.month + 1, 1);
+        //        double[,,] changeFactors = md.changeFactors;//future date ranges * ensembles * precip, temp
+        //        HDdP.Add(date, changeFactors[0, 0, 0]);
+        //        HDdT.Add(date, changeFactors[0, 0, 1]);
+        //        HWdP.Add(date, changeFactors[0, 1, 0]);
+        //        HWdT.Add(date, changeFactors[0, 1, 1]);
+        //        WDdP.Add(date, changeFactors[0, 2, 0]);
+        //        WDdT.Add(date, changeFactors[0, 2, 1]);
+        //        WWdP.Add(date, changeFactors[0, 3, 0]);
+        //        WWdT.Add(date, changeFactors[0, 3, 1]);
+        //        MIdP.Add(date, changeFactors[0, 4, 0]);
+        //        MIdT.Add(date, changeFactors[0, 4, 1]);
+        //    }
 
-            //add the series to the serieslists
-            HWt.Add(HWdT);
-            HWp.Add(HWdP);
-            HDt.Add(HDdT);
-            HDp.Add(HDdP);
-            MIt.Add(MIdT);
-            MIp.Add(MIdP);
-            WWt.Add(WWdT);
-            WWp.Add(WWdP);
-            WDt.Add(WDdT);
-            WDp.Add(WDdP);
+        //    //add the series to the serieslists
+        //    HWt.Add(HWdT);
+        //    HWp.Add(HWdP);
+        //    HDt.Add(HDdT);
+        //    HDp.Add(HDdP);
+        //    MIt.Add(MIdT);
+        //    MIp.Add(MIdP);
+        //    WWt.Add(WWdT);
+        //    WWp.Add(WWdP);
+        //    WDt.Add(WDdT);
+        //    WDp.Add(WDdP);
 
-            //set the names and providers of the series
-            HWdT.Name = "HWdT";
-            HWdT.Provider = "Series";
-            HWdP.Name = "HWdP";
-            HWdP.Provider = "Series";
-            HDdT.Name = "HDdT";
-            HDdT.Provider = "Series";
-            HDdP.Name = "HDdP";
-            HDdP.Provider = "Series";
-            MIdT.Name = "MIdT";
-            MIdT.Provider = "Series";
-            MIdP.Name = "MIdP";
-            MIdP.Provider = "Series";
-            WWdT.Name = "WWdT";
-            WWdT.Provider = "Series";
-            WWdP.Name = "WWdP";
-            WWdP.Provider = "Series";
-            WDdT.Name = "WDdT";
-            WDdT.Provider = "Series";
-            WDdP.Name = "WDdP";
+        //    //set the names and providers of the series
+        //    HWdT.Name = "HWdT";
+        //    HWdT.Provider = "Series";
+        //    HWdP.Name = "HWdP";
+        //    HWdP.Provider = "Series";
+        //    HDdT.Name = "HDdT";
+        //    HDdT.Provider = "Series";
+        //    HDdP.Name = "HDdP";
+        //    HDdP.Provider = "Series";
+        //    MIdT.Name = "MIdT";
+        //    MIdT.Provider = "Series";
+        //    MIdP.Name = "MIdP";
+        //    MIdP.Provider = "Series";
+        //    WWdT.Name = "WWdT";
+        //    WWdT.Provider = "Series";
+        //    WWdP.Name = "WWdP";
+        //    WWdP.Provider = "Series";
+        //    WDdT.Name = "WDdT";
+        //    WDdT.Provider = "Series";
+        //    WDdP.Name = "WDdP";
 
-            //Add Folder and Series to database
-            PiscesFolder sFldr = pDB.AddFolder(forcingFileName);
-            sFldr.Parent = prntFldr;
-            pDB.AddSeries(HWdT, sFldr);
-            pDB.AddSeries(HWdP, sFldr);
-            pDB.AddSeries(HDdT, sFldr);
-            pDB.AddSeries(HDdP, sFldr);
-            pDB.AddSeries(MIdT, sFldr);
-            pDB.AddSeries(MIdP, sFldr);
-            pDB.AddSeries(WWdT, sFldr);
-            pDB.AddSeries(WWdP, sFldr);
-            pDB.AddSeries(WDdT, sFldr);
-            pDB.AddSeries(WDdP, sFldr);
-        }
+        //    //Add Folder and Series to database
+        //    PiscesFolder sFldr = pDB.AddFolder(forcingFileName);
+        //    sFldr.Parent = prntFldr;
+        //    pDB.AddSeries(HWdT, sFldr);
+        //    pDB.AddSeries(HWdP, sFldr);
+        //    pDB.AddSeries(HDdT, sFldr);
+        //    pDB.AddSeries(HDdP, sFldr);
+        //    pDB.AddSeries(MIdT, sFldr);
+        //    pDB.AddSeries(MIdP, sFldr);
+        //    pDB.AddSeries(WWdT, sFldr);
+        //    pDB.AddSeries(WWdP, sFldr);
+        //    pDB.AddSeries(WDdT, sFldr);
+        //    pDB.AddSeries(WDdP, sFldr);
+        //}
 
         private void setNamePadding() {
             int longest = 0;
