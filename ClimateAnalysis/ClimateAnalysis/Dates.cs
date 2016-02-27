@@ -31,11 +31,17 @@ namespace ClimateAnalysis
             dates.Add(new ProcessData.DateRange(10, 1950, 9, 2000));
         }
 
-        public List<ProcessData.DateRange> getDates() {
-            //add default future if no future in list
-            if (dates.Count == 1)
-                dates.Add(new ProcessData.DateRange(10, 2030, 9, 2060));
-            return dates;
+        public List<ProcessData.DateRange> DateRange
+        {
+            get {
+                //add default future if no future in list
+                if (dates.Count == 1)
+                    dates.Add(new ProcessData.DateRange(10, 2030, 9, 2060));
+                return dates;
+            }
+            internal set {
+                dates = value;
+            }
         }
 
         public bool isSummerOnly() {

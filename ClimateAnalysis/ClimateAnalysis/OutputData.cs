@@ -526,10 +526,12 @@ namespace ClimateAnalysis {
                 }
 
                 for (int ensemble = 0; ensemble < ensembles.Length; ensemble++) {
-                    TextWriter fileTW = new StreamWriter(outputFolderName + "/" + makeValidFileName(ensembles[ensemble].ensembleName) + "_" + dates[range + 1].ToStringWithUnderscores() + "_" + forcingFileName);
-                    fileTW.NewLine = "\n"; 
-                    for (int i = 0; i < output[ensemble].Count; i++)
-                        fileTW.WriteLine(output[ensemble][i]);
+                    var fname = outputFolderName + "/" + makeValidFileName(ensembles[ensemble].ensembleName) + "_" + dates[range + 1].ToStringWithUnderscores() + "_" + forcingFileName;
+                    using (TextWriter fileTW = new StreamWriter(fname)) {
+                        fileTW.NewLine = "\n";
+                        for (int i = 0; i < output[ensemble].Count; i++)
+                            fileTW.WriteLine(output[ensemble][i]);
+                    }
                 }
             }
         }

@@ -219,6 +219,7 @@
     <Compile Include="Stats.Designer.cs">
       <DependentUpon>Stats.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tests\TestVIC.cs" />
     <EmbeddedResource Include="Dates.resx">
       <DependentUpon>Dates.cs</DependentUpon>
     </EmbeddedResource>
@@ -269,6 +270,14 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Tests\Data\VIC\inputs\Yakima_Baseline_forcing_46.03125_-120.46875" />
+    <None Include="Tests\Data\VIC\inputs\Yakima_Prcp_SpatialStat_mean.CMIP5.csv" />
+    <None Include="Tests\Data\VIC\inputs\Yakima_Tavg_SpatialStat_mean.CMIP5.csv" />
+    <None Include="Tests\Data\VIC\outputs_expected\LessWarmingDry_Jan2070_Dec2099_Yakima_Baseline_forcing_46.03125_-120.46875" />
+    <None Include="Tests\Data\VIC\outputs_expected\LessWarmingWet_Jan2070_Dec2099_Yakima_Baseline_forcing_46.03125_-120.46875" />
+    <None Include="Tests\Data\VIC\outputs_expected\Median_Jan2070_Dec2099_Yakima_Baseline_forcing_46.03125_-120.46875" />
+    <None Include="Tests\Data\VIC\outputs_expected\MoreWarmingDry_Jan2070_Dec2099_Yakima_Baseline_forcing_46.03125_-120.46875" />
+    <None Include="Tests\Data\VIC\outputs_expected\MoreWarmingWet_Jan2070_Dec2099_Yakima_Baseline_forcing_46.03125_-120.46875" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -315,6 +324,10 @@
     <None Include="Resources\adjust.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Tests\Data\VIC\inputs\Projections.CMIP5.txt" />
+    <Content Include="Tests\Data\VIC\outputs_expected\md5s.txt" />
+    <Content Include="Tests\Data\VIC\outputs_expected\Monthly_HDePT_Factors_Jan2070_Dec2099.txt" />
+    <Content Include="Tests\Data\VIC\outputs_expected\Projections_Summary_Jan2070_Dec2099.txt" />
     <None Include="Resources\select_poly_32.png" />
     <None Include="Resources\Button-Help-icon.png" />
     <None Include="Resources\Draw_Box_32.png" />
@@ -323,6 +336,10 @@
     <None Include="Resources\Actions-window-close-icon.png" />
     <Content Include="License-LGPL.txt" />
     <Content Include="Resources\Image1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Tests\Data\DHSVM\" />
+    <Folder Include="Tests\Data\GSFLOW\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

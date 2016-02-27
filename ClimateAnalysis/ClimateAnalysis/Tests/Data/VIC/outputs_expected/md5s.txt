@@ -1,0 +1,7 @@
+LessWarmingDry_Jan2070_Dec2099_Yakima_Baseline_forcing_46.03125_-120.46875,–‰É6uu¡é×Ö¾E¸
+LessWarmingWet_Jan2070_Dec2099_Yakima_Baseline_forcing_46.03125_-120.46875,ÿnRº§8t’väQ03
+Median_Jan2070_Dec2099_Yakima_Baseline_forcing_46.03125_-120.46875,TÛ³¿‚ë®°½~ê˜
+Monthly_HDePT_Factors_Jan2070_Dec2099.txt,*Ò~U¼Pcd˜fòYb
+MoreWarmingDry_Jan2070_Dec2099_Yakima_Baseline_forcing_46.03125_-120.46875,ÐœJœFay|õÄÒVÆ2Gö
+MoreWarmingWet_Jan2070_Dec2099_Yakima_Baseline_forcing_46.03125_-120.46875,ÅÔýYÏeöWˆÖ´ß½œ
+Projections_Summary_Jan2070_Dec2099.txt,Ñé…©¨8µ±;”jU¦‡Ï
