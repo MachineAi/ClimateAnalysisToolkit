@@ -220,6 +220,7 @@
       <DependentUpon>Stats.cs</DependentUpon>
     </Compile>
     <Compile Include="Tests\TestVIC.cs" />
+    <Compile Include="Tests\Utils.cs" />
     <EmbeddedResource Include="Dates.resx">
       <DependentUpon>Dates.cs</DependentUpon>
     </EmbeddedResource>
