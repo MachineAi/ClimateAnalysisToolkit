@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/8wqg255qwoy53g0k?svg=true)](https://ci.appveyor.com/project/blounsbury36183/climatetools)
+[![Build status](https://ci.appveyor.com/api/projects/status/06kmt7yy5nepbpt7?svg=true)](https://ci.appveyor.com/project/blounsbury36183/climateanalysistoolkit)
 
 # What is Climate Analysis Toolkit
 
