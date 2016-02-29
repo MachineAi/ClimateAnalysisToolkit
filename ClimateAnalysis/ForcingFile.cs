@@ -3,18 +3,24 @@ using System.IO;
 using System.Windows.Forms;
 
 namespace ClimateAnalysis {
+
+    public enum ForcingFormat {
+        VIC, DHSVM, GSFLOW
+    };
+
     public partial class ForcingFile : Form {
         private FolderBrowserDialog fbd = new FolderBrowserDialog();
         private String forcingFileName = "";
         private String saveToFolderName;
         private Output output;
-        private bool VIC;
 
         public ForcingFile(Output output) {
             InitializeComponent();
             this.output = output;
             textBox3.Text = output.getSaveToFolderName();
             saveToFolderName = output.getSaveToFolderName();
+            comboBoxFormat.DataSource = Enum.GetNames(typeof(ForcingFormat));
+            comboBoxFormat.SelectedItem = Enum.GetName(typeof(ForcingFormat), ForcingFormat.VIC);
         }
 
         //browse for forcing file
@@ -34,7 +40,7 @@ namespace ClimateAnalysis {
         }
 
         //adjust button
-        private void button2_Click(object sender, EventArgs e) {
+        private void btnAdjust_Click(object sender, EventArgs e) {
             OutputData dataOut = output.getOutputData();
             DateTime date = new DateTime();
 
@@ -50,12 +56,10 @@ namespace ClimateAnalysis {
 
             dataOut.setSaveToFolderName(saveToFolderName);
 
-            if (radioButton1.Checked)
-                VIC = true;
-            else
-                VIC = false;
+            var format = (ForcingFormat)Enum.Parse(typeof(ForcingFormat), 
+                comboBoxFormat.SelectedItem.ToString());
 
-            if (VIC) {
+            if (format == ForcingFormat.VIC) {
                 try {
                     date = DateTime.Parse(textBox2.Text);
                 }
@@ -70,7 +74,7 @@ namespace ClimateAnalysis {
                 string[] files = Directory.GetFiles(folder);
                 foreach (string s in files) {
                     try {
-                        dataOut.adjustForcingFile(s, VIC, chkPisces.Checked, date);
+                        dataOut.adjustForcingFile(s, format, chkPisces.Checked, date);
                     }
                     catch (Exception) {
                         MessageBox.Show("Error parsing: " + s);
@@ -78,7 +82,7 @@ namespace ClimateAnalysis {
                 }
             }
             else {
-                dataOut.adjustForcingFile(forcingFileName, VIC, chkPisces.Checked, date);
+                dataOut.adjustForcingFile(forcingFileName, format, chkPisces.Checked, date);
             }
 
             this.Hide();
@@ -88,7 +92,7 @@ namespace ClimateAnalysis {
         }
 
         //cancel button
-        private void button4_Click(object sender, EventArgs e) {
+        private void btnCancel_Click(object sender, EventArgs e) {
             this.Hide();
         }
 

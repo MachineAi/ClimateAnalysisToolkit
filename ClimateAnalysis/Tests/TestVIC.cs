@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using NUnit.Framework;
 
@@ -24,7 +25,7 @@ namespace ClimateAnalysis.Tests
             var vicT = Path.Combine(inputs, "Yakima_Tavg_SpatialStat_mean.CMIP5.csv");
             var proj = Path.Combine(inputs, "Projections.CMIP5.txt");
             var forc = Path.Combine(inputs, "Yakima_Baseline_forcing_46.03125_-120.46875");
-            
+
             var ca = new ClimateAnalysis();
             var dates = new Dates(ca);
             dates.DateRange = new List<ProcessData.DateRange>() {
@@ -42,7 +43,7 @@ namespace ClimateAnalysis.Tests
             var output = new OutputData(processor, outputs);
             output.writeHybridDeltaEnsemble();
             output.writeProjectionSummaries();
-            output.adjustForcingFile(forc, true, false, new DateTime(1915, 1, 1));
+            output.adjustForcingFile(forc, ForcingFormat.VIC, false, new DateTime(1915, 1, 1));
 
             string md5s = Path.Combine(outputs_expected, "md5s.txt");
             using (StreamReader sw = new StreamReader(md5s)) {

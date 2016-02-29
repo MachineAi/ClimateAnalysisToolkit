@@ -57,7 +57,6 @@
             // 
             // openFileDialog
             // 
-            this.openFileDialog.FileName = "openFileDialog1";
             this.openFileDialog.Filter = "csv, NetCDF|*.csv; *.nc|All files|*.*";
             // 
             // textBox1
@@ -155,7 +154,6 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.Filter = "Text(.txt)|*.txt";
             // 
             // checkBox1
@@ -177,7 +175,7 @@
             this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar1.TabIndex = 36;
             // 
-            // Import
+            // ImportFromFile
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -197,7 +195,7 @@
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "Import";
+            this.Name = "ImportFromFile";
             this.ShowIcon = false;
             this.Text = "Import Data";
             this.ResumeLayout(false);
