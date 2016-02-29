@@ -28,6 +28,6 @@ These describe the methodology used in developing this Climate Analysis Toolkit:
 
 - [METED training courses for climate change projection selection, processing, and modeling](http://courses.comet.ucar.edu/course/index.php?categoryid=33)
 
-- [Publications discussing the projection selection and processing for the Columbia River basin (see Parts 1 and 4)](http://www.usbr.gov/pn/programs/climatechange/reports/)
+- [Publications discussing the projection selection and processing for the Columbia River basin (see Parts 1 and 4)](http://www.usbr.gov/pn/climate/crbia/webinar.html)
 
 - [Discusses the projection selection and processing for the Rio Grande basin (see Appendix C Section IV)](http://www.usbr.gov/WaterSMART/wcra/index.html )
