@@ -1,4 +1,5 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/06kmt7yy5nepbpt7?svg=true)](https://ci.appveyor.com/project/blounsbury36183/climateanalysistoolkit)
+[![Build status](https://ci.appveyor.com/api/projects/status/06kmt7yy5nepbpt7?svg=true)](https://ci.appveyor.com/project/blounsbury36183/climateanalysistoolkit) 
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/usbr/ClimateAnalysisToolkit/master/LICENSE)
 
 # What is Climate Analysis Toolkit
 
