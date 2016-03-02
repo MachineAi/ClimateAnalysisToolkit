@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
@@ -42,7 +43,7 @@ namespace ClimateAnalysis {
         //adjust button
         private void btnAdjust_Click(object sender, EventArgs e) {
             OutputData dataOut = output.getOutputData();
-            DateTime date = new DateTime();
+            DateTime date = default(DateTime);
 
             if (saveToFolderName == "") {
                 MessageBox.Show("Please specify an output folder.");
@@ -62,8 +63,7 @@ namespace ClimateAnalysis {
             if (format == ForcingFormat.VIC) {
                 try {
                     date = DateTime.Parse(textBox2.Text);
-                }
-                catch (Exception) {
+                } catch (Exception) {
                     MessageBox.Show("Date is not in the correct format.");
                     return;
                 }
@@ -75,20 +75,18 @@ namespace ClimateAnalysis {
                 foreach (string s in files) {
                     try {
                         dataOut.adjustForcingFile(s, format, chkPisces.Checked, date);
-                    }
-                    catch (Exception) {
+                    } catch (Exception) {
                         MessageBox.Show("Error parsing: " + s);
                     }
                 }
-            }
-            else {
+            } else {
                 dataOut.adjustForcingFile(forcingFileName, format, chkPisces.Checked, date);
             }
 
             this.Hide();
 
             //open output folder
-            System.Diagnostics.Process.Start(saveToFolderName);
+            Process.Start(saveToFolderName);
         }
 
         //cancel button

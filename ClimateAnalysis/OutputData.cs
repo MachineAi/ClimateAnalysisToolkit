@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 //using Reclamation.Core;
@@ -11,8 +12,12 @@ namespace ClimateAnalysis {
         private ProcessData processor;
         private ProcessData.Ensemble[] ensembles;
         private List<KeyValuePair<DateTime, double[]>> forcingData;//data from the forcing file
+        private List<KeyValuePair<DateTime, Dictionary<string, double[]>>> forcingDataGSFLOW;
+        private List<string> headerGSFLOW;
+        private Dictionary<string, int> varsGSFLOW;
+        private HashSet<string> varsOrderedGSFLOW;
         private List<MonthlyData> monthlyData; //data for each month in the historical time period
-        private List<ProcessData.DateRange> dates = null;
+        private List<ProcessData.DateRange> dates;
         private int namePadding;
 
         #region public methods
@@ -22,9 +27,11 @@ namespace ClimateAnalysis {
         /// </summary>
         /// <param name="proc">The ProcessData object containing the data.</param>
         /// <param name="outFolderName">The path of the folder where the files will be written to.</param>
-        public OutputData(ProcessData proc, String outFolderName) {
+        public OutputData(ProcessData proc, string outFolderName) {
             processor = proc;
             outputFolderName = outFolderName;
+            ensembles = processor.getEnsembles();
+            dates = processor.getDates();
         }
 
         /// <summary>
@@ -36,11 +43,7 @@ namespace ClimateAnalysis {
             if(outputFolderName == "")
                 return;
 
-            //get data from ProcessData instance
-            ensembles = processor.getEnsembles();
             setNamePadding();
-            if (dates == null)
-                dates = processor.getDates();
 
             for (int range = 0; range < dates.Count - 1; range++) {
                 lines = new List<string>();
@@ -83,11 +86,7 @@ namespace ClimateAnalysis {
             if (outputFolderName == "")
                 return;
 
-            //get data from ProcessData instance
-            ensembles = processor.getEnsembles();
             setNamePadding();
-            if (dates == null)
-                dates = processor.getDates();
 
             for (int range = 0; range < dates.Count - 1; range++) {
                 lines = new List<string>();
@@ -138,11 +137,7 @@ namespace ClimateAnalysis {
             if(outputFolderName == "")
                 return;
 
-            //get data from ProcessData object
-            ensembles = processor.getEnsembles();
             setNamePadding();
-            if (dates == null)
-                dates = processor.getDates();
 
             string[] names = processor.getModelNames();
 
@@ -187,10 +182,7 @@ namespace ClimateAnalysis {
             if(outputFolderName == "")
                 return;
 
-            //get data from ProcessData instance
-            ensembles = processor.getEnsembles();
             setNamePadding();
-            dates = dates ?? processor.getDates();
 
             //write deltaEnsembles to file
             for (int range = 0; range < dates.Count - 1; range++) {
@@ -228,18 +220,18 @@ namespace ClimateAnalysis {
         /// <param name="forcingFile">The path to the forcing file.</param>
         /// <param name="VIC">True if VIC, false if DHSVM</param>
         public void adjustForcingFile(string forcingFile, ForcingFormat format, 
-            bool generateDatabase, DateTime forcingFileStartDate) {
+            bool generateDatabase, DateTime forcingFileStartDate = default(DateTime)) {
             
-            if(outputFolderName == "")
+            if (outputFolderName == "")
                 return;
-            if (format == ForcingFormat.VIC && forcingFileStartDate == null)
+            if (format == ForcingFormat.VIC && forcingFileStartDate == default(DateTime))
                 return;
 
             //read in forcing file
             readForcingFile(forcingFile, format, forcingFileStartDate);
 
             //write adjusted data to output folder
-            writeAdjustedForcingFiles(format, Path.GetFileName(forcingFile));
+            writeAdjustedForcingFiles(forcingFile, format);
 
             //generate pisces database if requested
             //if (generateDatabase)
@@ -260,9 +252,6 @@ namespace ClimateAnalysis {
         private void readForcingFile(string forcingFile, ForcingFormat format, 
             DateTime forcingFileStartDate) {
             
-            //get data from ProcessData instance
-            if (dates == null)
-                dates = processor.getDates();
             DateTime startDate = new DateTime(dates[0].startYear, dates[0].startMonth, 1);//period to be adjusted starts on this date
             DateTime endDate = new DateTime(dates[0].endYear, dates[0].endMonth, 1);
             endDate = endDate.AddMonths(1);//period to be adjusted ends on the day before this date
@@ -277,10 +266,10 @@ namespace ClimateAnalysis {
                     forcingData = readForcingFileDHSVM(forcingFile, startDate, endDate);
                     break;
                 case ForcingFormat.GSFLOW:
-                    forcingData = readForcingFileGSFLOW(forcingFile, startDate, endDate);
+                    forcingDataGSFLOW = readForcingFileGSFLOW(forcingFile, startDate, endDate);
                     break;
                 default:
-                    break;
+                    throw new InvalidEnumArgumentException();
             }
         }
 
@@ -357,14 +346,62 @@ namespace ClimateAnalysis {
             return rval;
         }
 
-        private List<KeyValuePair<DateTime, double[]>> readForcingFileGSFLOW(string forcingFile, DateTime startDate, DateTime endDate)
-        {
-            throw new NotImplementedException();
+        private List<KeyValuePair<DateTime, Dictionary<string, double[]>>> readForcingFileGSFLOW(string forcingFile, 
+            DateTime startDate, DateTime endDate) {
+
+            var rval = new List<KeyValuePair<DateTime, Dictionary<string, double[]>>>();
+            
+            string[] lines = File.ReadAllLines(forcingFile);
+
+            //store header lines to write out later
+            int lineIdx = 0;
+            headerGSFLOW = new List<string>();
+            do
+            {
+                headerGSFLOW.Add(lines[lineIdx++]);
+            } while (!lines[lineIdx].Contains("####"));
+            headerGSFLOW.Add(lines[lineIdx++]);
+
+            //store variables and lengths
+            varsGSFLOW = new Dictionary<string, int>();
+            varsOrderedGSFLOW = new HashSet<string>();
+            var knownVars = new List<string>() { "pan_evap", "runoff", 
+                "precip", "solrad", "tmax", "tmin", "form_data", "rain_day" };
+            foreach (var item in headerGSFLOW) {
+                var line = SplitOnSpaceOrTab(item);
+                if (knownVars.Contains(line[0])) {
+                    varsGSFLOW.Add(line[0], Convert.ToInt32(line[1]));
+                    varsOrderedGSFLOW.Add(line[0]);
+                }
+            }
+            
+            //get actual data
+            for (int i = lineIdx; i < lines.Length; i++) {
+                var line = SplitOnSpaceOrTab(lines[i]);
+                var iLine = Array.ConvertAll(line.Take(6).ToArray(), Convert.ToInt32);
+                var date = new DateTime(iLine[0], iLine[1], iLine[2], iLine[3], iLine[4], iLine[5]);
+
+                //skip row if outside of time period
+                if (date < startDate || date >= endDate)
+                    continue;
+
+                var dLine = Array.ConvertAll(line.Skip(6).Take(line.Length).ToArray(), Convert.ToDouble);
+
+                int lastIdx = 0;
+                var valuesList = new Dictionary<string,double[]>();
+                foreach (var pair in varsGSFLOW) {
+                    var values = dLine.Skip(lastIdx).Take(pair.Value).ToArray();
+                    valuesList.Add(pair.Key, values);
+                    lastIdx += pair.Value;
+                }
+                rval.Add(new KeyValuePair<DateTime, Dictionary<string, double[]>>(date, valuesList));
+            }
+
+            return rval;
         }
 
         static char[] delimiter = new char[] { ' ', '\t' };
-        private static string[] SplitOnSpaceOrTab(string line)
-        {
+        private static string[] SplitOnSpaceOrTab(string line) {
             return line.Split(delimiter, StringSplitOptions.RemoveEmptyEntries);
         }
 
@@ -388,8 +425,8 @@ namespace ClimateAnalysis {
 
             //creates a MonthlyData object for each month in forcingData
             foreach (KeyValuePair<DateTime, double[]> pair in forcingData) {
-                if (pair.Key.Day == 1 && format == ForcingFormat.VIC || 
-                    format != ForcingFormat.VIC && pair.Key.Day == 1 && pair.Key.Hour == 0) {//new month
+                if ((pair.Key.Day == 1 && (format == ForcingFormat.VIC || format == ForcingFormat.GSFLOW)) || 
+                    (format == ForcingFormat.DHSVM && pair.Key.Day == 1 && pair.Key.Hour == 0)) {//new month
                     
                     if (numOfTimePeriodsThisMonth != 0) {
                         //add new MonthlyData object to monthlyData
@@ -419,10 +456,12 @@ namespace ClimateAnalysis {
                         totalTemp += pair.Value[0];
                         break;
                     case ForcingFormat.GSFLOW:
-                        //value = ?, ?, ?, ?
+                        //values = precip, tmax, tmin, tavg
+                        totalPrecip += pair.Value[0];
+                        totalTemp += pair.Value[3];
                         break;
                     default:
-                        break;
+                        throw new InvalidEnumArgumentException();
                 }
                 
                 numOfTimePeriodsThisMonth++;
@@ -522,12 +561,106 @@ namespace ClimateAnalysis {
         }
 
         //write out copies of the forcing file, one for each ensemble, adjusting the precip and temp columns in the process
-        private void writeAdjustedForcingFiles(ForcingFormat format, string forcingFileName) {
-            
-            //get data from ProcessData instance
-            ensembles = processor.getEnsembles();
-            dates = dates ?? processor.getDates();
+        private void writeAdjustedForcingFiles(string forcingFile, ForcingFormat format) {
 
+            switch (format)
+            {
+                case ForcingFormat.VIC:
+                case ForcingFormat.DHSVM:
+                    writeAdjustedForcingFilesVICorDHSVM(forcingFile, format);
+                    break;
+                case ForcingFormat.GSFLOW:
+                    writeAdjustedForcingFilesGSFLOW(forcingFile, format);
+                    break;
+                default:
+                    throw new InvalidEnumArgumentException();
+            }
+        }
+
+        private void writeAdjustedForcingFilesGSFLOW(string forcingFile,
+            ForcingFormat format) {
+
+                for (int range = 0; range < dates.Count - 1; range++) {
+                    var output = new List<KeyValuePair<DateTime, Dictionary<string, double[]>>>[ensembles.Length];
+                    for (int i = 0; i < output.Length; i++)  {
+                        output[i] = new List<KeyValuePair<DateTime, Dictionary<string, double[]>>>(forcingDataGSFLOW);
+                    }
+
+                    //use precip as surrogate for number of grid points to adjust
+                    for (int i = 0; i < varsGSFLOW["precip"]; i++) {
+                        forcingData = getVIClikeGSFLOWforcingData(i);
+                        findMonthlyValues(format);
+
+                        int monthIdx = 0;
+                        MonthlyData monthData = monthlyData[0];
+
+                        int dateIdx = 0;
+                        foreach (KeyValuePair<DateTime, double[]> pair in forcingData) {
+                            if (pair.Key.Day == 1)
+                                monthData = monthlyData[monthIdx++];
+
+                            //values = precip, tmax, tmin, tavg     monthData.changeFactors = future date ranges * ensembles * precip, temp
+                            for (int ensemble = 0; ensemble < ensembles.Length; ensemble++) {
+                                double precip = pair.Value[0];
+                                double precipFactor = monthData.changeFactors[range, ensemble, 0];
+                                double tempFactor = monthData.changeFactors[range, ensemble, 1];
+                                if (precipFactor != 0)//multiply precip value by change factor if factor is not 0, change factor will be 0 sometimes with summer only
+                                    precip *= precipFactor;
+                                output[ensemble][dateIdx].Value["precip"][i] = precip;
+                                if (pair.Value[1] != -901.0)
+                                    output[ensemble][dateIdx].Value["tmax"][i] = pair.Value[1] + tempFactor;
+                                if (pair.Value[2] != -901.0)
+                                    output[ensemble][dateIdx].Value["tmin"][i] = pair.Value[2] + tempFactor;
+                            }
+                            dateIdx++;
+                        }
+                    }
+
+                    //write output files to GSFLOW format
+                    for (int ensemble = 0; ensemble < output.Length; ensemble++) {
+                        var fname = outputFolderName + "/" + makeValidFileName(ensembles[ensemble].ensembleName) + "_" + dates[range + 1].ToStringWithUnderscores() + "_" + Path.GetFileName(forcingFile);
+                        using (TextWriter fileTW = new StreamWriter(fname)) {
+                            fileTW.NewLine = "\n";
+                            //write header
+                            foreach (var line in headerGSFLOW) {
+                                fileTW.WriteLine(line);
+                            }
+                            for (int i = 0; i < output[ensemble].Count; i++) {
+                                //write date
+                                fileTW.Write(output[ensemble][i].Key.ToString("yyyy M d H m s") + " ");
+                                //write each var
+                                foreach (string var in varsOrderedGSFLOW) {
+                                    var line = string.Join(" ", output[ensemble][i].Value[var].Select(x => x.ToString("F02")).ToArray());
+                                    fileTW.Write(line + " ");
+                                }
+                                fileTW.WriteLine("");
+                            }
+                        }
+                    }
+
+                }
+        }
+
+        private List<KeyValuePair<DateTime, double[]>> getVIClikeGSFLOWforcingData(int i) {
+
+            var rval = new List<KeyValuePair<DateTime, double[]>>();
+            
+            foreach (var item in forcingDataGSFLOW) {
+                //values = precip, tmax, tmin, tavg
+                var values = new double[4];
+                values[0] = item.Value["precip"][i];
+                values[1] = item.Value["tmax"][i];
+                values[2] = item.Value["tmin"][i];
+                values[3] = (values[1] + values[2]) / 2;
+                rval.Add(new KeyValuePair<DateTime, double[]>(item.Key, values));
+            }
+
+            return rval;
+        }
+
+        private void writeAdjustedForcingFilesVICorDHSVM(string forcingFile, 
+            ForcingFormat format) {
+            
             findMonthlyValues(format);
             for (int range = 0; range < dates.Count - 1; range++) {
                 var output = new List<string>[ensembles.Length];
@@ -538,50 +671,42 @@ namespace ClimateAnalysis {
                 int index = 0;
                 MonthlyData monthData = monthlyData[0];
 
-                foreach (KeyValuePair<DateTime, double[]> pair in forcingData)
-                {
-                    switch (format) {
-                        case ForcingFormat.VIC:
-                            if (pair.Key.Day == 1)
-                                monthData = monthlyData[index++];
+                foreach (KeyValuePair<DateTime, double[]> pair in forcingData) {
+                    if (format == ForcingFormat.VIC) {
+                        if (pair.Key.Day == 1)
+                            monthData = monthlyData[index++];
 
-                            //value in vic = Precip, MaxTemp, MinTemp, Wind, AvgTemp;     monthData.changeFactors = future date ranges * ensembles * precip, temp
-                            for (int ensemble = 0; ensemble < ensembles.Length; ensemble++) {
-                                double precip = pair.Value[0];
-                                if (monthData.changeFactors[range, ensemble, 0] != 0)//multiply precip value by change factor if factor is not 0, change factor will be 0 sometimes with summer only
-                                    precip *= monthData.changeFactors[range, ensemble, 0];
-                                output[ensemble].Add(precip.ToString("F04") + "\t" + (pair.Value[1] + monthData.changeFactors[range, ensemble, 1]).ToString("F04") +
-                                    "\t" + (pair.Value[2] + monthData.changeFactors[range, ensemble, 1]).ToString("F04") + "\t" + pair.Value[3].ToString("F04"));
-                            }
-                            break;
-                        case ForcingFormat.DHSVM:
-                            if (pair.Key.Day == 1 && pair.Key.Hour == 0)
-                                monthData = monthlyData[index++];
+                        //value in vic = Precip, MaxTemp, MinTemp, Wind, AvgTemp;     monthData.changeFactors = future date ranges * ensembles * precip, temp
+                        for (int ensemble = 0; ensemble < ensembles.Length; ensemble++) {
+                            double precip = pair.Value[0];
+                            if (monthData.changeFactors[range, ensemble, 0] != 0)//multiply precip value by change factor if factor is not 0, change factor will be 0 sometimes with summer only
+                                precip *= monthData.changeFactors[range, ensemble, 0];
+                            output[ensemble].Add(precip.ToString("F04") + "\t" + (pair.Value[1] + monthData.changeFactors[range, ensemble, 1]).ToString("F04") +
+                                "\t" + (pair.Value[2] + monthData.changeFactors[range, ensemble, 1]).ToString("F04") + "\t" + pair.Value[3].ToString("F04"));
+                        }
+                    } else if (format == ForcingFormat.DHSVM) {
+                        if (pair.Key.Day == 1 && pair.Key.Hour == 0)
+                            monthData = monthlyData[index++];
 
-                            string date = pair.Key.ToString("MM/dd/yyyy-HH");
-                            string glacier = "";//if the DHSVM file has 9 columns, the last column has something to do with glacier lapse rates
-                            if (pair.Value.Length == 8)
-                                glacier = pair.Value[7].ToString("F08");
+                        string date = pair.Key.ToString("MM/dd/yyyy-HH");
+                        string glacier = "";//if the DHSVM file has 9 columns, the last column has something to do with glacier lapse rates
+                        if (pair.Value.Length == 8)
+                            glacier = pair.Value[7].ToString("F08");
 
-                            //value = temp, ?, ?, ?, ?, precip, ?, ?,  monthData.changeFactors = future date ranges * ensembles * precip, temp
-                            for (int ensemble = 0; ensemble < ensembles.Length; ensemble++) {
-                                double precip = pair.Value[5];
-                                if (monthData.changeFactors[range, ensemble, 0] != 0)//multiply precip value by change factor if factor is not 0, change factor will be 0 sometimes with summer only
-                                    precip *= monthData.changeFactors[range, ensemble, 0];
-                                output[ensemble].Add(date + " " + (pair.Value[0] + monthData.changeFactors[range, ensemble, 1]).ToString("F04") + " " + pair.Value[1].ToString("F04") + " " +
-                                    pair.Value[2].ToString("F04") + " " + pair.Value[3].ToString("F04") + " " + pair.Value[4].ToString("F04") + " " +
-                                    precip.ToString("F07") + " " + pair.Value[6].ToString("F08") + " " + glacier);
-                            }
-                            break;
-                        case ForcingFormat.GSFLOW:
-                            break;
-                        default:
-                            break;
+                        //value = temp, ?, ?, ?, ?, precip, ?, ?,  monthData.changeFactors = future date ranges * ensembles * precip, temp
+                        for (int ensemble = 0; ensemble < ensembles.Length; ensemble++) {
+                            double precip = pair.Value[5];
+                            if (monthData.changeFactors[range, ensemble, 0] != 0)//multiply precip value by change factor if factor is not 0, change factor will be 0 sometimes with summer only
+                                precip *= monthData.changeFactors[range, ensemble, 0];
+                            output[ensemble].Add(date + " " + (pair.Value[0] + monthData.changeFactors[range, ensemble, 1]).ToString("F04") + " " + pair.Value[1].ToString("F04") + " " +
+                                pair.Value[2].ToString("F04") + " " + pair.Value[3].ToString("F04") + " " + pair.Value[4].ToString("F04") + " " +
+                                precip.ToString("F07") + " " + pair.Value[6].ToString("F08") + " " + glacier);
+                        }
                     }
                 }
 
                 for (int ensemble = 0; ensemble < output.Length; ensemble++) {
-                    var fname = outputFolderName + "/" + makeValidFileName(ensembles[ensemble].ensembleName) + "_" + dates[range + 1].ToStringWithUnderscores() + "_" + forcingFileName;
+                    var fname = outputFolderName + "/" + makeValidFileName(ensembles[ensemble].ensembleName) + "_" + dates[range + 1].ToStringWithUnderscores() + "_" + Path.GetFileName(forcingFile);
                     using (TextWriter fileTW = new StreamWriter(fname)) {
                         fileTW.NewLine = "\n";
                         for (int i = 0; i < output[ensemble].Count; i++)
