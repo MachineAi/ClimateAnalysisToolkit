@@ -256,8 +256,6 @@ namespace ClimateAnalysis {
             DateTime endDate = new DateTime(dates[0].endYear, dates[0].endMonth, 1);
             endDate = endDate.AddMonths(1);//period to be adjusted ends on the day before this date
 
-            forcingData = new List<KeyValuePair<DateTime, double[]>>();
-
             switch (format) {
                 case ForcingFormat.VIC:
                     forcingData = readForcingFileVIC(forcingFile, startDate, endDate, forcingFileStartDate);
@@ -581,8 +579,8 @@ namespace ClimateAnalysis {
 
                 for (int range = 0; range < dates.Count - 1; range++) {
                     var output = new List<KeyValuePair<DateTime, Dictionary<string, double[]>>>[ensembles.Length];
-                    for (int i = 0; i < output.Length; i++)  {
-                        output[i] = new List<KeyValuePair<DateTime, Dictionary<string, double[]>>>(forcingDataGSFLOW);
+                    for (int i = 0; i < ensembles.Length; i++)  {
+                        output[i] = copyForcingDataGSFLOW();
                     }
 
                     //use precip as surrogate for number of grid points to adjust
@@ -606,17 +604,15 @@ namespace ClimateAnalysis {
                                 if (precipFactor != 0)//multiply precip value by change factor if factor is not 0, change factor will be 0 sometimes with summer only
                                     precip *= precipFactor;
                                 output[ensemble][dateIdx].Value["precip"][i] = precip;
-                                if (pair.Value[1] != -901.0)
-                                    output[ensemble][dateIdx].Value["tmax"][i] = pair.Value[1] + tempFactor;
-                                if (pair.Value[2] != -901.0)
-                                    output[ensemble][dateIdx].Value["tmin"][i] = pair.Value[2] + tempFactor;
+                                output[ensemble][dateIdx].Value["tmax"][i] = pair.Value[1] + tempFactor;
+                                output[ensemble][dateIdx].Value["tmin"][i] = pair.Value[2] + tempFactor;
                             }
                             dateIdx++;
                         }
                     }
 
                     //write output files to GSFLOW format
-                    for (int ensemble = 0; ensemble < output.Length; ensemble++) {
+                    for (int ensemble = 0; ensemble < ensembles.Length; ensemble++) {
                         var fname = outputFolderName + "/" + makeValidFileName(ensembles[ensemble].ensembleName) + "_" + dates[range + 1].ToStringWithUnderscores() + "_" + Path.GetFileName(forcingFile);
                         using (TextWriter fileTW = new StreamWriter(fname)) {
                             fileTW.NewLine = "\n";
@@ -638,6 +634,23 @@ namespace ClimateAnalysis {
                     }
 
                 }
+        }
+
+        private List<KeyValuePair<DateTime, Dictionary<string, double[]>>> copyForcingDataGSFLOW() {
+
+            var rval = new List<KeyValuePair<DateTime, Dictionary<string, double[]>>>();
+
+            foreach (var item in forcingDataGSFLOW) {
+                var dict = new Dictionary<string, double[]>();
+                foreach (var pair in item.Value) {
+                    var values = new double[pair.Value.Length];
+                    Array.Copy(pair.Value, values, pair.Value.Length);
+                    dict.Add(pair.Key, values);
+                }
+                rval.Add(new KeyValuePair<DateTime, Dictionary<string, double[]>>(item.Key, dict));
+            }
+
+            return rval;
         }
 
         private List<KeyValuePair<DateTime, double[]>> getVIClikeGSFLOWforcingData(int i) {
