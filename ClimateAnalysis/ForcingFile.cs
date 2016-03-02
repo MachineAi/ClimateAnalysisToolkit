@@ -62,7 +62,7 @@ namespace ClimateAnalysis {
 
             if (format == ForcingFormat.VIC) {
                 try {
-                    date = DateTime.Parse(textBox2.Text);
+                    date = DateTime.Parse(textBoxVICstart.Text);
                 } catch (Exception) {
                     MessageBox.Show("Date is not in the correct format.");
                     return;
@@ -99,5 +99,14 @@ namespace ClimateAnalysis {
             this.Hide();
             e.Cancel = true;
         }
+
+        private void comboBoxFormat_SelectionChangeCommitted(object sender, EventArgs e) {
+            var format = (ForcingFormat)Enum.Parse(typeof(ForcingFormat),
+                comboBoxFormat.SelectedItem.ToString());
+            var formatVIC = (format == ForcingFormat.VIC);
+            lblVICstart.Visible = formatVIC;
+            textBoxVICstart.Visible = formatVIC;
+        }
+
     }
 }

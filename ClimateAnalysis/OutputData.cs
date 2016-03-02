@@ -563,8 +563,7 @@ namespace ClimateAnalysis {
         //write out copies of the forcing file, one for each ensemble, adjusting the precip and temp columns in the process
         private void writeAdjustedForcingFiles(string forcingFile, ForcingFormat format) {
 
-            switch (format)
-            {
+            switch (format) {
                 case ForcingFormat.VIC:
                 case ForcingFormat.DHSVM:
                     writeAdjustedForcingFilesVICorDHSVM(forcingFile, format);

@@ -28,8 +28,8 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button1 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.textBoxVICstart = new System.Windows.Forms.TextBox();
+            this.lblVICstart = new System.Windows.Forms.Label();
             this.btnAdjust = new System.Windows.Forms.Button();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -79,22 +79,22 @@
             this.label2.TabIndex = 3;
             this.label2.Text = "Format";
             // 
-            // textBox2
+            // textBoxVICstart
             // 
-            this.textBox2.Location = new System.Drawing.Point(168, 110);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(77, 20);
-            this.textBox2.TabIndex = 6;
-            this.textBox2.Text = "01/01/1915";
+            this.textBoxVICstart.Location = new System.Drawing.Point(168, 110);
+            this.textBoxVICstart.Name = "textBoxVICstart";
+            this.textBoxVICstart.Size = new System.Drawing.Size(77, 20);
+            this.textBoxVICstart.TabIndex = 6;
+            this.textBoxVICstart.Text = "01/01/1915";
             // 
-            // label3
+            // lblVICstart
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(165, 94);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(159, 13);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "VIC Start Date (MM/DD/YYYY):";
+            this.lblVICstart.AutoSize = true;
+            this.lblVICstart.Location = new System.Drawing.Point(165, 94);
+            this.lblVICstart.Name = "lblVICstart";
+            this.lblVICstart.Size = new System.Drawing.Size(159, 13);
+            this.lblVICstart.TabIndex = 7;
+            this.lblVICstart.Text = "VIC Start Date (MM/DD/YYYY):";
             // 
             // btnAdjust
             // 
@@ -171,6 +171,7 @@
             this.comboBoxFormat.Name = "comboBoxFormat";
             this.comboBoxFormat.Size = new System.Drawing.Size(121, 21);
             this.comboBoxFormat.TabIndex = 15;
+            this.comboBoxFormat.SelectionChangeCommitted += new System.EventHandler(this.comboBoxFormat_SelectionChangeCommitted);
             // 
             // ForcingFile
             // 
@@ -185,8 +186,8 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.btnAdjust);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.lblVICstart);
+            this.Controls.Add(this.textBoxVICstart);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
@@ -205,8 +206,8 @@
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
 		private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.TextBox textBox2;
-		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.TextBox textBoxVICstart;
+		private System.Windows.Forms.Label lblVICstart;
 		private System.Windows.Forms.Button btnAdjust;
 		private System.Windows.Forms.TextBox textBox3;
 		private System.Windows.Forms.Label label4;
