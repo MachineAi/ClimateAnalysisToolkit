@@ -14,10 +14,10 @@ namespace ClimateAnalysis.Tests
         [Test]
         public void AdjustForcingGSFLOW() {
             var projDir = Path.GetFullPath(Path.Combine(buildDir, buildDirToProjectDir));
-            var vicDataDir = Path.Combine(projDir, "Tests", "Data", "GSFLOW");
-            var inputs = Path.Combine(vicDataDir, "inputs");
-            var outputs_expected = Path.Combine(vicDataDir, "outputs_expected");
-            var outputs = Path.Combine(vicDataDir, "outputs");
+            var gsflowDataDir = Path.Combine(projDir, "Tests", "Data", "GSFLOW");
+            var inputs = Path.Combine(gsflowDataDir, "inputs");
+            var outputs_expected = Path.Combine(gsflowDataDir, "outputs_expected");
+            var outputs = Path.Combine(gsflowDataDir, "outputs");
             Directory.CreateDirectory(outputs);
 
             var vicP = Path.Combine(inputs, "CRBIA_Deschutes_Prcp_SpatialStat_mean.CMIP5.csv");
