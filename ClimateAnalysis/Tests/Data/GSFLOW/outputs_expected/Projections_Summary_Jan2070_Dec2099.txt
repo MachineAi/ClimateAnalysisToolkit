@@ -1,0 +1,65 @@
+More Warming/Dry
+GCM                      	Change in Precip(%)	Change in Temp(degC)	Rank
+mpi-esm-lr.3.rcp85       		-1.107227			4.126739			1
+ccsm4.4.rcp85            		-1.233976			3.807456			2
+hadgem2-ao.1.rcp60       		0.888909			3.817908			3
+hadgem2-ao.1.rcp45       		1.430507			3.889911			4
+miroc-esm-chem.1.rcp60   		-3.661593			4.110486			5
+hadgem2-es.3.rcp60       		1.651396			3.742786			6
+gfdl-esm2g.1.rcp85       		2.110762			3.752489			7
+csiro-mk3-6-0.4.rcp85    		0.702418			4.749889			8
+bcc-csm1-1.1.rcp85       		-3.924276			4.347005			9
+gfdl-cm3.1.rcp85         		1.467877			4.787314			10
+
+More Warming/Wet
+GCM                      	Change in Precip(%)	Change in Temp(degC)	Rank
+ccsm4.5.rcp85            		13.417920			4.104306			1
+ec-earth.6.rcp85         		13.879570			4.225033			2
+cmcc-cm.1.rcp85          		13.757130			4.051078			3
+noresm1-me.1.rcp85       		15.179160			4.144597			4
+hadgem2-es.2.rcp60       		11.972230			4.065122			5
+cesm1-bgc.1.rcp85        		12.326050			3.922806			6
+cnrm-cm5.4.rcp85         		15.490740			4.446333			7
+fgoals-g2.1.rcp85        		11.826210			3.810344			8
+cnrm-cm5.6.rcp85         		15.548150			4.603906			9
+hadgem2-es.1.rcp60       		11.239880			3.772003			10
+
+Median
+GCM                      	Change in Precip(%)	Change in Temp(degC)	Rank
+csiro-mk3-6-0.4.rcp60    		5.717112			2.840564			1
+noresm1-m.1.rcp45        		5.860876			2.645139			2
+csiro-mk3-6-0.5.rcp45    		5.296059			2.898172			3
+hadgem2-es.3.rcp45       		5.001501			2.966942			4
+noresm1-me.1.rcp45       		4.531191			2.554514			5
+csiro-mk3-6-0.4.rcp45    		4.066043			2.772564			6
+canesm2.2.rcp45          		7.294975			3.108219			7
+gfdl-esm2m.1.rcp85       		3.511996			2.779845			8
+csiro-mk3-6-0.8.rcp45    		3.310116			2.738844			9
+ccsm4.5.rcp60            		8.252438			2.588342			10
+
+Less Warming/Dry
+GCM                      	Change in Precip(%)	Change in Temp(degC)	Rank
+giss-e2-r.3.rcp45        		-1.229252			1.414289			1
+gfdl-esm2m.1.rcp60       		-2.611896			1.590589			2
+giss-e2-r-cc.1.rcp45     		-0.224738			1.294589			3
+ccsm4.4.rcp45            		2.163405			1.939092			4
+mpi-esm-lr.2.rcp45       		0.598623			2.125022			5
+mpi-esm-lr.1.rcp45       		2.611470			1.799511			6
+canesm2.2.rcp26          		0.699837			2.130797			7
+fgoals-g2.1.rcp45        		0.455194			2.141047			8
+giss-e2-r.4.rcp45        		0.288482			1.208817			9
+csiro-mk3-6-0.7.rcp26    		2.749458			1.659306			10
+
+Less Warming/Wet
+GCM                      	Change in Precip(%)	Change in Temp(degC)	Rank
+ipsl-cm5a-lr.2.rcp26     		13.903450			1.543481			1
+cesm1-cam5.3.rcp26       		12.819970			1.732908			2
+fio-esm.2.rcp60          		13.656450			1.443817			3
+cesm1-cam5.1.rcp26       		14.682210			1.501931			4
+noresm1-m.1.rcp26        		12.475400			1.559203			5
+csiro-mk3-6-0.5.rcp26    		13.315590			1.958061			6
+giss-e2-h-cc.1.rcp45     		14.669680			1.352269			7
+ccsm4.3.rcp60            		14.114670			2.096822			8
+fio-esm.1.rcp60          		10.683330			1.447569			9
+hadgem2-es.1.rcp26       		16.510950			2.139047			10
+

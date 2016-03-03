@@ -23,7 +23,7 @@ namespace ClimateAnalysis.Tests
             var vicP = Path.Combine(inputs, "CRBIA_Deschutes_Prcp_SpatialStat_mean.CMIP5.csv");
             var vicT = Path.Combine(inputs, "CRBIA_Deschutes_Tavg_SpatialStat_mean.CMIP5.csv");
             var proj = Path.Combine(inputs, "Projections.CMIP5.txt");
-            var forc = Path.Combine(inputs, "deschutes.1980-2013.data");
+            var forc = Path.Combine(inputs, "deschutes.1980-2013.small.data");
 
             var ca = new ClimateAnalysis();
             var dates = new Dates(ca);
@@ -44,20 +44,28 @@ namespace ClimateAnalysis.Tests
             output.writeProjectionSummaries();
             output.adjustForcingFile(forc, ForcingFormat.GSFLOW, false);
 
-            //string md5s = Path.Combine(outputs_expected, "md5s.txt");
-            //using (StreamReader sw = new StreamReader(md5s))
-            //{
-            //    string line;
-            //    while (!sw.EndOfStream)
-            //    {
-            //        line = sw.ReadLine();
-            //        string[] info = line.Split(',');
-            //        string fname = info[0];
-            //        string md5_prev = info[1];
-            //        string md5_new = Utils.getMD5(Path.Combine(outputs, fname));
-            //        Assert.AreEqual(md5_prev, md5_new);
+            //generate expected md5s
+            //using (var sw = new StreamWriter(Path.Combine(outputs_expected, "md5s.txt"))) {
+            //    foreach (var f in Directory.GetFiles(outputs_expected)) {
+            //        var fname = Path.GetFileName(f);
+            //        if (fname != "md5s.txt")
+            //            sw.WriteLine(fname + "," + Utils.getMD5(f));
             //    }
             //}
+
+            //compare md5s
+            string md5s = Path.Combine(outputs_expected, "md5s.txt");
+            using (StreamReader sr = new StreamReader(md5s)) {
+                string line;
+                while (!sr.EndOfStream) {
+                    line = sr.ReadLine();
+                    string[] info = line.Split(',');
+                    string fname = info[0];
+                    string md5_prev = info[1];
+                    string md5_new = Utils.getMD5(Path.Combine(outputs, fname));
+                    Assert.AreEqual(md5_prev, md5_new);
+                }
+            }
         }
 
     }

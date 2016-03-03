@@ -279,6 +279,7 @@
     <None Include="Tests\Data\GSFLOW\inputs\CRBIA_Deschutes_Prcp_SpatialStat_mean.CMIP5.csv" />
     <None Include="Tests\Data\GSFLOW\inputs\CRBIA_Deschutes_Tavg_SpatialStat_mean.CMIP5.csv" />
     <None Include="Tests\Data\GSFLOW\inputs\deschutes.1980-2013.data" />
+    <None Include="Tests\Data\GSFLOW\inputs\deschutes.1980-2013.small.data" />
     <None Include="Tests\Data\VIC\inputs\Yakima_Baseline_forcing_46.03125_-120.46875" />
     <None Include="Tests\Data\VIC\inputs\Yakima_Prcp_SpatialStat_mean.CMIP5.csv" />
     <None Include="Tests\Data\VIC\inputs\Yakima_Tavg_SpatialStat_mean.CMIP5.csv" />

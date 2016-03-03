@@ -44,11 +44,21 @@ namespace ClimateAnalysis.Tests
             output.writeProjectionSummaries();
             output.adjustForcingFile(forc, ForcingFormat.VIC, false, new DateTime(1915, 1, 1));
 
+            //generate expected md5s
+            //using (var sw = new StreamWriter(Path.Combine(outputs_expected, "md5s.txt"))) {
+            //    foreach (var f in Directory.GetFiles(outputs_expected)) {
+            //        var fname = Path.GetFileName(f);
+            //        if (fname != "md5s.txt")
+            //            sw.WriteLine(fname + "," + Utils.getMD5(f));
+            //    }
+            //}
+
+            //compare md5s
             string md5s = Path.Combine(outputs_expected, "md5s.txt");
-            using (StreamReader sw = new StreamReader(md5s)) {
+            using (StreamReader sr = new StreamReader(md5s)) {
                 string line;
-                while (!sw.EndOfStream) {
-                    line = sw.ReadLine();
+                while (!sr.EndOfStream) {
+                    line = sr.ReadLine();
                     string[] info = line.Split(',');
                     string fname = info[0];
                     string md5_prev = info[1];
