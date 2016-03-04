@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace ClimateAnalysis
@@ -29,21 +30,18 @@ namespace ClimateAnalysis
         }
 
         //browse for output folder name button
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (fbd.ShowDialog() == DialogResult.OK)
-            {
+        private void button1_Click(object sender, EventArgs e) {
+            if (fbd.ShowDialog() == DialogResult.OK) {
                 saveToFolderName = fbd.SelectedPath;
                 textBox1.Text = saveToFolderName;
             }
         }
 
         //create files button
-        private void button2_Click(object sender, EventArgs e)
-        {
+        private void button2_Click(object sender, EventArgs e) {
+
             //check to make sure inputs are correct
-            if (textBox1.Text != saveToFolderName || textBox1.Text == "")
-            {
+            if (textBox1.Text != saveToFolderName || textBox1.Text == "") {
                 MessageBox.Show("Please specify an output folder before creating files.");
                 return;
             }
@@ -58,36 +56,31 @@ namespace ClimateAnalysis
 
             processor.generateDeltas();
 
-            if (checkBox1.Checked)
-            {
+            if (checkBox1.Checked) {
                 dataOut.writeHybridDeltaEnsemble();
             }
-            if (checkBox2.Checked)
-            {
+            if (checkBox2.Checked) {
                 dataOut.writeHybridEnsemble();
             }
-            if (checkBox3.Checked)
-            {
+            if (checkBox3.Checked) {
                 dataOut.writeDeltaEnsemble();
             }
-            if (checkBox4.Checked)
-            {
+            if (checkBox4.Checked) {
                 dataOut.writeProjectionSummaries();
             }
-            if (checkBox5.Checked) 
-            {
+            if (checkBox5.Checked) {
                 graph.drawGraph(null, 0);
                 graph.saveGraph(saveToFolderName);
             }
+
             this.Hide();
 
             //open output folder
-            System.Diagnostics.Process.Start(saveToFolderName);
+            Process.Start(saveToFolderName);
         }
 
         //cancel button
-        private void button3_Click(object sender, EventArgs e)
-        {
+        private void button3_Click(object sender, EventArgs e) {
             this.Hide();
         }
 

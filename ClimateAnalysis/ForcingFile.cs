@@ -1,20 +1,27 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
 namespace ClimateAnalysis {
+
+    public enum ForcingFormat {
+        VIC, DHSVM, GSFLOW
+    };
+
     public partial class ForcingFile : Form {
         private FolderBrowserDialog fbd = new FolderBrowserDialog();
         private String forcingFileName = "";
         private String saveToFolderName;
         private Output output;
-        private bool VIC;
 
         public ForcingFile(Output output) {
             InitializeComponent();
             this.output = output;
             textBox3.Text = output.getSaveToFolderName();
             saveToFolderName = output.getSaveToFolderName();
+            comboBoxFormat.DataSource = Enum.GetNames(typeof(ForcingFormat));
+            comboBoxFormat.SelectedItem = Enum.GetName(typeof(ForcingFormat), ForcingFormat.VIC);
         }
 
         //browse for forcing file
@@ -34,9 +41,9 @@ namespace ClimateAnalysis {
         }
 
         //adjust button
-        private void button2_Click(object sender, EventArgs e) {
+        private void btnAdjust_Click(object sender, EventArgs e) {
             OutputData dataOut = output.getOutputData();
-            DateTime date = new DateTime();
+            DateTime date = default(DateTime);
 
             if (saveToFolderName == "") {
                 MessageBox.Show("Please specify an output folder.");
@@ -50,16 +57,13 @@ namespace ClimateAnalysis {
 
             dataOut.setSaveToFolderName(saveToFolderName);
 
-            if (radioButton1.Checked)
-                VIC = true;
-            else
-                VIC = false;
+            var format = (ForcingFormat)Enum.Parse(typeof(ForcingFormat), 
+                comboBoxFormat.SelectedItem.ToString());
 
-            if (VIC) {
+            if (format == ForcingFormat.VIC) {
                 try {
-                    date = DateTime.Parse(textBox2.Text);
-                }
-                catch (Exception) {
+                    date = DateTime.Parse(textBoxVICstart.Text);
+                } catch (Exception) {
                     MessageBox.Show("Date is not in the correct format.");
                     return;
                 }
@@ -70,25 +74,23 @@ namespace ClimateAnalysis {
                 string[] files = Directory.GetFiles(folder);
                 foreach (string s in files) {
                     try {
-                        dataOut.adjustForcingFile(s, VIC, chkPisces.Checked, date);
-                    }
-                    catch (Exception) {
+                        dataOut.adjustForcingFile(s, format, chkPisces.Checked, date);
+                    } catch (Exception) {
                         MessageBox.Show("Error parsing: " + s);
                     }
                 }
-            }
-            else {
-                dataOut.adjustForcingFile(forcingFileName, VIC, chkPisces.Checked, date);
+            } else {
+                dataOut.adjustForcingFile(forcingFileName, format, chkPisces.Checked, date);
             }
 
             this.Hide();
 
             //open output folder
-            System.Diagnostics.Process.Start(saveToFolderName);
+            Process.Start(saveToFolderName);
         }
 
         //cancel button
-        private void button4_Click(object sender, EventArgs e) {
+        private void btnCancel_Click(object sender, EventArgs e) {
             this.Hide();
         }
 
@@ -97,5 +99,14 @@ namespace ClimateAnalysis {
             this.Hide();
             e.Cancel = true;
         }
+
+        private void comboBoxFormat_SelectionChangeCommitted(object sender, EventArgs e) {
+            var format = (ForcingFormat)Enum.Parse(typeof(ForcingFormat),
+                comboBoxFormat.SelectedItem.ToString());
+            var formatVIC = (format == ForcingFormat.VIC);
+            lblVICstart.Visible = formatVIC;
+            textBoxVICstart.Visible = formatVIC;
+        }
+
     }
 }

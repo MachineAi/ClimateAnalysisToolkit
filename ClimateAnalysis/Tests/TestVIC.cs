@@ -24,7 +24,7 @@ namespace ClimateAnalysis.Tests
             var vicT = Path.Combine(inputs, "Yakima_Tavg_SpatialStat_mean.CMIP5.csv");
             var proj = Path.Combine(inputs, "Projections.CMIP5.txt");
             var forc = Path.Combine(inputs, "Yakima_Baseline_forcing_46.03125_-120.46875");
-            
+
             var ca = new ClimateAnalysis();
             var dates = new Dates(ca);
             dates.DateRange = new List<ProcessData.DateRange>() {
@@ -42,17 +42,27 @@ namespace ClimateAnalysis.Tests
             var output = new OutputData(processor, outputs);
             output.writeHybridDeltaEnsemble();
             output.writeProjectionSummaries();
-            output.adjustForcingFile(forc, true, false, new DateTime(1915, 1, 1));
+            output.adjustForcingFile(forc, ForcingFormat.VIC, false, new DateTime(1915, 1, 1));
 
+            //generate expected md5s
+            //using (var sw = new StreamWriter(Path.Combine(outputs_expected, "md5s.txt"))) {
+            //    foreach (var f in Directory.GetFiles(outputs_expected)) {
+            //        var fname = Path.GetFileName(f);
+            //        if (fname != "md5s.txt")
+            //            sw.WriteLine(fname + "," + Utils.getMD5Hash(f));
+            //    }
+            //}
+
+            //compare md5s
             string md5s = Path.Combine(outputs_expected, "md5s.txt");
-            using (StreamReader sw = new StreamReader(md5s)) {
+            using (StreamReader sr = new StreamReader(md5s)) {
                 string line;
-                while (!sw.EndOfStream) {
-                    line = sw.ReadLine();
+                while (!sr.EndOfStream) {
+                    line = sr.ReadLine();
                     string[] info = line.Split(',');
                     string fname = info[0];
                     string md5_prev = info[1];
-                    string md5_new = Utils.getMD5(Path.Combine(outputs, fname));
+                    string md5_new = Utils.getMD5Hash(Path.Combine(outputs, fname));
                     Assert.AreEqual(md5_prev, md5_new);
                 }
             }

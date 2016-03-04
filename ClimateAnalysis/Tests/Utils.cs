@@ -1,16 +1,27 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Linq;
 
 namespace ClimateAnalysis.Tests
 {
     public static class Utils {
 
-        public static string getMD5(string filename) {
+        public static string getMD5Hash(string filename) {
+            var rval = new StringBuilder();
             using (var md5 = MD5.Create()) {
-                using (var stream = File.OpenRead(filename)) {
-                    return Encoding.Default.GetString(md5.ComputeHash(stream));
+                var lines = File.ReadAllLines(filename);
+                var bytes = new List<byte[]>();
+                for (int i = 0; i < lines.Length; i++) {
+                    bytes.Add(Encoding.ASCII.GetBytes(lines[i]));
                 }
+                var hash = md5.ComputeHash(bytes.SelectMany(i => i).ToArray());
+                for (int i = 0; i < hash.Length; i++) {
+                    rval.Append(hash[i].ToString("x2"));
+                }
+                return rval.ToString();
             }
         }
 
