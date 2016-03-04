@@ -1,0 +1,6 @@
+artifacts:
+  - path: ClimateAnalysis\Tests\Data\GSFLOW\outputs
+  - name: gsflow_outputs
+  
+  - path: ClimateAnalysis\Tests\Data\VIC\outputs
+  - name: vic_outputs
