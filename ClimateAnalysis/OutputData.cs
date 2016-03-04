@@ -15,7 +15,7 @@ namespace ClimateAnalysis {
         private List<KeyValuePair<DateTime, Dictionary<string, double[]>>> forcingDataGSFLOW;
         private List<string> headerGSFLOW;
         private Dictionary<string, int> varsGSFLOW;
-        private HashSet<string> varsOrderedGSFLOW;
+        private List<string> varsOrderedGSFLOW;
         private List<MonthlyData> monthlyData; //data for each month in the historical time period
         private List<ProcessData.DateRange> dates;
         private int namePadding;
@@ -362,7 +362,7 @@ namespace ClimateAnalysis {
 
             //store variables and lengths
             varsGSFLOW = new Dictionary<string, int>();
-            varsOrderedGSFLOW = new HashSet<string>();
+            varsOrderedGSFLOW = new List<string>();
             var knownVars = new List<string>() { "pan_evap", "runoff", 
                 "precip", "solrad", "tmax", "tmin", "form_data", "rain_day" };
             foreach (var item in headerGSFLOW) {
@@ -387,10 +387,11 @@ namespace ClimateAnalysis {
 
                 int lastIdx = 0;
                 var valuesList = new Dictionary<string,double[]>();
-                foreach (var pair in varsGSFLOW) {
-                    var values = dLine.Skip(lastIdx).Take(pair.Value).ToArray();
-                    valuesList.Add(pair.Key, values);
-                    lastIdx += pair.Value;
+                foreach (var item in varsOrderedGSFLOW) {
+                    var numValues = varsGSFLOW[item];
+                    var values = dLine.Skip(lastIdx).Take(numValues).ToArray();
+                    valuesList.Add(item, values);
+                    lastIdx += numValues;
                 }
                 rval.Add(new KeyValuePair<DateTime, Dictionary<string, double[]>>(date, valuesList));
             }
@@ -624,9 +625,14 @@ namespace ClimateAnalysis {
                                 //write date
                                 fileTW.Write(output[ensemble][i].Key.ToString("yyyy M d H m s") + " ");
                                 //write each var
-                                foreach (string var in varsOrderedGSFLOW) {
+                                var numVars = varsOrderedGSFLOW.Count;
+                                for (int j = 0; j < numVars; j++) {
+                                    var var = varsOrderedGSFLOW[j];
                                     var line = string.Join(" ", output[ensemble][i].Value[var].Select(x => x.ToString("F02")).ToArray());
-                                    fileTW.Write(line + " ");
+                                    fileTW.Write(line);
+
+                                    if (j < numVars - 1)
+                                        fileTW.Write(" ");
                                 }
                                 fileTW.WriteLine("");
                             }
