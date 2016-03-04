@@ -49,7 +49,7 @@ namespace ClimateAnalysis.Tests
             //    foreach (var f in Directory.GetFiles(outputs_expected)) {
             //        var fname = Path.GetFileName(f);
             //        if (fname != "md5s.txt")
-            //            sw.WriteLine(fname + "," + Utils.getMD5(f));
+            //            sw.WriteLine(fname + "," + Utils.getMD5Hash(f));
             //    }
             //}
 
@@ -62,7 +62,7 @@ namespace ClimateAnalysis.Tests
                     string[] info = line.Split(',');
                     string fname = info[0];
                     string md5_prev = info[1];
-                    string md5_new = Utils.getMD5(Path.Combine(outputs, fname));
+                    string md5_new = Utils.getMD5Hash(Path.Combine(outputs, fname));
                     Assert.AreEqual(md5_prev, md5_new);
                 }
             }
