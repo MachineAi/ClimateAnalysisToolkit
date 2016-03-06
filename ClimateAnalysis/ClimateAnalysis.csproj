@@ -280,6 +280,11 @@
     <None Include="Tests\Data\GSFLOW\inputs\CRBIA_Deschutes_Tavg_SpatialStat_mean.CMIP5.csv" />
     <None Include="Tests\Data\GSFLOW\inputs\deschutes.1980-2013.data" />
     <None Include="Tests\Data\GSFLOW\inputs\deschutes.1980-2013.small.data" />
+    <None Include="Tests\Data\GSFLOW\outputs_expected\LessWarmingDry_Jan2070_Dec2099_deschutes.1980-2013.small.data" />
+    <None Include="Tests\Data\GSFLOW\outputs_expected\LessWarmingWet_Jan2070_Dec2099_deschutes.1980-2013.small.data" />
+    <None Include="Tests\Data\GSFLOW\outputs_expected\Median_Jan2070_Dec2099_deschutes.1980-2013.small.data" />
+    <None Include="Tests\Data\GSFLOW\outputs_expected\MoreWarmingDry_Jan2070_Dec2099_deschutes.1980-2013.small.data" />
+    <None Include="Tests\Data\GSFLOW\outputs_expected\MoreWarmingWet_Jan2070_Dec2099_deschutes.1980-2013.small.data" />
     <None Include="Tests\Data\VIC\inputs\Yakima_Baseline_forcing_46.03125_-120.46875" />
     <None Include="Tests\Data\VIC\inputs\Yakima_Prcp_SpatialStat_mean.CMIP5.csv" />
     <None Include="Tests\Data\VIC\inputs\Yakima_Tavg_SpatialStat_mean.CMIP5.csv" />
@@ -335,6 +340,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Tests\Data\GSFLOW\inputs\Projections.CMIP5.txt" />
+    <Content Include="Tests\Data\GSFLOW\outputs_expected\md5s.txt" />
+    <Content Include="Tests\Data\GSFLOW\outputs_expected\Monthly_HDePT_Factors_Jan2070_Dec2099.txt" />
+    <Content Include="Tests\Data\GSFLOW\outputs_expected\Projections_Summary_Jan2070_Dec2099.txt" />
     <Content Include="Tests\Data\VIC\inputs\Projections.CMIP5.txt" />
     <Content Include="Tests\Data\VIC\outputs_expected\md5s.txt" />
     <Content Include="Tests\Data\VIC\outputs_expected\Monthly_HDePT_Factors_Jan2070_Dec2099.txt" />
