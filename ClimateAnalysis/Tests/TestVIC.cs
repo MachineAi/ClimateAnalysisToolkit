@@ -8,7 +8,7 @@ namespace ClimateAnalysis.Tests
     [TestFixture]
     public class TestVIC {
 
-        string buildDirToProjectDir = "..\\..\\";
+        string buildDirToProjectDir = "..\\..\\..\\";
         string buildDir = AppDomain.CurrentDomain.BaseDirectory;
 
         [Test]
