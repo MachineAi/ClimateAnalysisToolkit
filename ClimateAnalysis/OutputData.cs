@@ -51,7 +51,7 @@ namespace ClimateAnalysis {
 
                 //go through each percentile from .02 to .98
                 for (int i = 0; i < 49; i++) {
-                    double percentile = (int) i * .02 + .02;
+                    double percentile = i * .02 + .02;
 
                     for (int j = 0; j < ensembles.Count(); j++) {
                         //hybridDeltaEnsemble = 12 months * 49 quantiles .02 - .98 * precip, temp * future periods
